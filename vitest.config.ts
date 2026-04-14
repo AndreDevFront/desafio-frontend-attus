@@ -13,9 +13,6 @@ export default defineConfig({
         singleFork: true,
       },
     },
-    sequence: {
-      shuffle: false,
-    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov', 'html'],
