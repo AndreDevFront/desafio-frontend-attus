@@ -1,172 +1,121 @@
-# 🧪 Desafio Técnico — Desenvolvedor Front End Angular
+# Desafio Frontend — Attus Procuradoria
 
-> Avaliação técnica para a vaga de **Desenvolvedor Front End Angular** na **Attus**.
-
----
-
-## 📋 Sobre o Desafio
-
-Este repositório contém a resolução completa do desafio técnico proposto pela Attus, que avalia conhecimentos práticos em:
-
-- Angular 17+
-- RxJS
-- NgRx / Signals
-- Angular Material
-- Testes unitários
-- TypeScript
-- Integração com APIs REST
+Aplicação Angular desenvolvida como parte do processo seletivo para a vaga de **Desenvolvedor Front-End**.
 
 ---
 
-## 🗂️ Estrutura do Projeto
-
-```
-desafio-frontend-attus/
-├── src/
-│   ├── app/
-│   │   ├── core/                        # Serviços globais, interceptors, guards
-│   │   ├── shared/                      # Componentes, pipes e diretivas reutilizáveis
-│   │   └── features/
-│   │       └── usuarios/                # Feature principal do desafio
-│   │           ├── data-access/         # Serviços, NgRx (actions, reducer, selectors, effects)
-│   │           ├── ui/                  # Componentes de apresentação (cards, modal, form)
-│   │           └── feature-usuarios/    # Smart component (orquestra estado e UI)
-├── README.md
-└── ...
-```
-
----
-
-## 🚀 Stack Utilizada
+## 🚀 Tecnologias utilizadas
 
 | Tecnologia | Versão | Finalidade |
 |---|---|---|
-| [Angular](https://angular.dev) | 17+ | Framework principal |
-| [TypeScript](https://www.typescriptlang.org) | 5.x | Linguagem base |
-| [Angular Material](https://material.angular.io) | 17+ | Biblioteca de componentes UI |
-| [NgRx](https://ngrx.io) | 17+ | Gerenciamento de estado global |
-| [RxJS](https://rxjs.dev) | 7.x | Programação reativa |
-| [Vitest](https://vitest.dev) | Latest | Testes unitários |
-| [Angular Testing Library](https://testing-library.com/angular) | Latest | Testes de componentes |
+| Angular | 17+ | Framework principal |
+| Angular Material | 17+ | Componentes de UI |
+| NgRx | 17+ | Gerenciamento de estado global |
+| RxJS | 7+ | Programação reativa |
+| TypeScript | 5+ | Tipagem estática |
+| Vitest | latest | Testes unitários |
 
 ---
 
-## ✅ Funcionalidades Implementadas
+## 📋 Pré-requisitos
 
-### Listagem de Usuários
-- Cards com nome, e-mail e botão de editar
-- Filtro por nome com debounce de 300ms
-- Estado de loading durante o carregamento
-- Mensagem de erro em caso de falha na requisição
-- Dados mockados via serviço Angular
-
-### Modal de Cadastro / Edição
-- Formulário reativo com os campos: **e-mail**, **nome**, **CPF**, **telefone** e **tipo de telefone**
-- Validação com mensagens de erro por campo
-- Validação de formato: e-mail, CPF e telefone
-- Botão salvar desabilitado enquanto o formulário estiver inválido
-- Preenchimento automático ao editar um usuário existente
+- [Node.js](https://nodejs.org/) **v18+**
+- [npm](https://www.npmjs.com/) **v9+** (ou `pnpm` / `yarn`)
 
 ---
 
-## 🧠 Decisões Técnicas
+## ⚙️ Instalação
 
-### Gerenciamento de Estado
-O estado da listagem de usuários é gerenciado com **NgRx**, seguindo o padrão `Actions → Reducer → Selectors → Effects`. Para o estado local do formulário e do carrinho (questão 3.1), foram utilizados **Angular Signals**.
+```bash
+# 1. Clone o repositório
+git clone https://github.com/AndreDevFront/desafio-frontend-attus.git
+cd desafio-frontend-attus
 
-### Componentes Standalone
-Todos os componentes foram criados como **standalone**, eliminando a necessidade de NgModules e alinhando com as boas práticas do Angular 17+.
+# 2. Instale as dependências
+npm install
+```
 
-### Gerenciamento de Subscriptions
-As subscriptions são gerenciadas com `takeUntilDestroyed()` (Angular 16+) e `async pipe`, eliminando memory leaks sem necessidade de `ngOnDestroy` manual.
+---
 
-### Operadores RxJS utilizados
-- `switchMap` — cancelamento de requisições anteriores
-- `debounceTime` — debounce no campo de busca
-- `distinctUntilChanged` — evita requisições duplicadas
-- `catchError` — tratamento de erros sem quebrar o stream
-- `forkJoin` — requisições paralelas
-- `filter` — filtragem de valores inválidos no stream
+## ▶️ Execução
+
+```bash
+# Servidor de desenvolvimento (http://localhost:4200)
+npm start
+```
 
 ---
 
 ## 🧪 Testes
 
-Os testes foram escritos com **Vitest** e cobrem acima de 60% do código, incluindo:
-
-- Serviços (lógica de negócio e requisições mockadas)
-- Reducers NgRx (transições de estado)
-- Selectors NgRx (derivação de estado)
-- Componentes (renderização e interações)
-
-Para rodar os testes:
-
 ```bash
-npm run test
-```
+# Executar todos os testes unitários
+npm test
 
-Para verificar a cobertura:
-
-```bash
+# Executar com cobertura
 npm run test:coverage
 ```
 
 ---
 
-## ⚙️ Como rodar o projeto
+## 🏗️ Estrutura do projeto
 
-### Pré-requisitos
-
-- Node.js **18+**
-- npm **9+** ou yarn
-- Angular CLI **17+**
-
-```bash
-npm install -g @angular/cli
 ```
-
-### Instalação
-
-```bash
-# Clone o repositório
-git clone https://github.com/AndreDevFront/desafio-frontend-attus.git
-
-# Acesse a pasta
-cd desafio-frontend-attus
-
-# Instale as dependências
-npm install
+src/
+└── app/
+    ├── features/
+    │   └── usuarios/
+    │       ├── data-access/
+    │       │   ├── models/          # Interfaces e tipos
+    │       │   ├── services/        # UsuariosService (mock com delay)
+    │       │   └── store/           # NgRx: actions, reducer, selectors, effects
+    │       ├── feature-usuarios/    # Componente raiz da feature
+    │       └── ui/
+    │           ├── usuario-card/    # Card de exibição do usuário
+    │           ├── usuario-form/    # Formulário reativo com máscaras
+    │           ├── usuario-modal/   # Modal de criação/edição
+    │           └── usuarios-list/   # Listagem com busca e paginação
+    └── shared/
+        └── directives/
+            ├── cpf-mask.directive.ts      # Máscara 000.000.000-00
+            └── telefone-mask.directive.ts # Máscara (00) 00000-0000
 ```
-
-### Executando
-
-```bash
-# Ambiente de desenvolvimento
-npm start
-# ou
-ng serve
-```
-
-Acesse em: [http://localhost:4200](http://localhost:4200)
 
 ---
 
-## 📦 Scripts disponíveis
+## ✅ Funcionalidades implementadas
 
-| Comando | Descrição |
+### Listagem de usuários
+- Cards com nome, e-mail, tipo de telefone e botão de editar
+- **Filtro por nome** com `debounceTime(300ms)` e `distinctUntilChanged`
+- **Paginação** com `MatPaginator` (6, 12 ou 24 itens por página)
+- Skeleton loading animado durante o carregamento
+- Empty state com mensagem amigável
+- Contador de usuários em tempo real
+
+### Formulário (criação e edição)
+- Campos: nome, e-mail, CPF, telefone, tipo de telefone
+- Validação reativa com mensagens de erro por campo
+- **Máscara de CPF**: `000.000.000-00`
+- **Máscara de telefone**: `(00) 00000-0000` / `(00) 0000-0000`
+- Botão salvar desabilitado enquanto o formulário for inválido
+- Preenchimento automático ao editar
+
+### Gerenciamento de estado (NgRx)
+- `Actions`: `loadUsuarios`, `salvarUsuario`, `setFiltroNome`, `setPagina`, `setTamanhoPagina`
+- `Reducer`: estado imutável com tipagem forte
+- `Selectors`: `selectUsuariosFiltrados`, `selectUsuariosPaginados`, `selectTotalFiltrados`, `selectTotalPaginas`
+- `Effects`: fluxo assíncrono com `switchMap` + `catchError`
+
+---
+
+## 📐 Requisitos técnicos atendidos
+
+| Requisito | Implementação |
 |---|---|
-| `npm start` | Inicia o servidor de desenvolvimento |
-| `npm run build` | Gera o build de produção |
-| `npm run test` | Executa os testes unitários |
-| `npm run test:coverage` | Executa os testes com relatório de cobertura |
-| `npm run lint` | Executa o linter |
-
----
-
-## 📬 Contato
-
-Qualquer dúvida sobre a implementação, entre em contato pelo e-mail informado no processo seletivo.
-
----
-
-> Desenvolvido por **André Luz da Silva** como parte do processo seletivo Attus. 🚀
+| 2+ operadores RxJS além de `map`/`tap` | `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchError` |
+| Componentes standalone | Todos os componentes usam `standalone: true` |
+| Sem memory leaks | `takeUntilDestroyed`, `async pipe`, `OnPush` |
+| Cobertura de testes > 60% | Reducer, selectors, service e diretivas testados |
+| Máscaras de validação *(diferencial)* | Diretivas puras Angular sem biblioteca externa |
+| Paginação *(diferencial)* | `MatPaginator` integrado ao NgRx store |

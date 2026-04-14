@@ -4,16 +4,19 @@ import {
   loadUsuarios, loadUsuariosSuccess, loadUsuariosError,
   salvarUsuario, salvarUsuarioSuccess, salvarUsuarioError,
   setFiltroNome, abrirModalUsuario, fecharModalUsuario,
+  setPagina, setTamanhoPagina,
 } from './usuarios.actions';
 
 export interface UsuariosState {
-  usuarios:       Usuario[];
-  loading:        boolean;
-  salvando:       boolean;
-  erro:           string | null;
-  filtroNome:     string;
-  modalAberto:    boolean;
-  usuarioEdicao:  Usuario | null;
+  usuarios:      Usuario[];
+  loading:       boolean;
+  salvando:      boolean;
+  erro:          string | null;
+  filtroNome:    string;
+  modalAberto:   boolean;
+  usuarioEdicao: Usuario | null;
+  pagina:        number;
+  tamanhoPagina: number;
 }
 
 export const initialState: UsuariosState = {
@@ -24,16 +27,18 @@ export const initialState: UsuariosState = {
   filtroNome:    '',
   modalAberto:   false,
   usuarioEdicao: null,
+  pagina:        0,
+  tamanhoPagina: 6,
 };
 
 export const usuariosReducer = createReducer(
   initialState,
 
-  on(loadUsuarios,        (state) => ({ ...state, loading: true,  erro: null })),
-  on(loadUsuariosSuccess, (state, { usuarios }) => ({ ...state, loading: false, usuarios })),
+  on(loadUsuarios,        (state) => ({ ...state, loading: true, erro: null })),
+  on(loadUsuariosSuccess, (state, { usuarios }) => ({ ...state, loading: false, usuarios, pagina: 0 })),
   on(loadUsuariosError,   (state, { erro })     => ({ ...state, loading: false, erro })),
 
-  on(salvarUsuario,        (state)           => ({ ...state, salvando: true,  erro: null })),
+  on(salvarUsuario,        (state)              => ({ ...state, salvando: true, erro: null })),
   on(salvarUsuarioSuccess, (state, { usuario }) => {
     const jaExiste = state.usuarios.some((u) => u.id === usuario.id);
     const usuarios = jaExiste
@@ -43,7 +48,10 @@ export const usuariosReducer = createReducer(
   }),
   on(salvarUsuarioError, (state, { erro }) => ({ ...state, salvando: false, erro })),
 
-  on(setFiltroNome,      (state, { filtro })  => ({ ...state, filtroNome: filtro })),
-  on(abrirModalUsuario,  (state, { usuario }) => ({ ...state, modalAberto: true,  usuarioEdicao: usuario })),
+  on(setFiltroNome,      (state, { filtro })  => ({ ...state, filtroNome: filtro, pagina: 0 })),
+  on(abrirModalUsuario,  (state, { usuario }) => ({ ...state, modalAberto: true,  usuarioEdicao: usuario ?? null })),
   on(fecharModalUsuario, (state)              => ({ ...state, modalAberto: false, usuarioEdicao: null })),
+
+  on(setPagina,        (state, { pagina })  => ({ ...state, pagina })),
+  on(setTamanhoPagina, (state, { tamanho }) => ({ ...state, tamanhoPagina: tamanho, pagina: 0 })),
 );
