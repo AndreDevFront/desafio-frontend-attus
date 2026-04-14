@@ -19,14 +19,15 @@ import { Usuario, TipoTelefone } from '../../data-access/models/usuario.model';
 import { CpfMaskDirective } from '../../../../shared/directives/cpf-mask.directive';
 import { TelefoneMaskDirective } from '../../../../shared/directives/telefone-mask.directive';
 
+// Valida removendo a máscara antes de contar os dígitos
 function cpfValidator(control: { value: string }) {
-  const cpf = control.value?.replace(/\D/g, '');
-  return cpf && cpf.length === 11 ? null : { cpfInvalido: true };
+  const digits = control.value?.replace(/\D/g, '');
+  return digits && digits.length === 11 ? null : { cpfInvalido: true };
 }
 
 function telefoneValidator(control: { value: string }) {
-  const tel = control.value?.replace(/\D/g, '');
-  return tel && (tel.length === 10 || tel.length === 11) ? null : { telefoneInvalido: true };
+  const digits = control.value?.replace(/\D/g, '');
+  return digits && (digits.length === 10 || digits.length === 11) ? null : { telefoneInvalido: true };
 }
 
 @Component({
@@ -146,30 +147,20 @@ function telefoneValidator(control: { value: string }) {
     </form>
   `,
   styles: [`
-    .form {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
+    .form { display: flex; flex-direction: column; gap: 0; }
     mat-form-field { width: 100%; }
-
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0 12px;
     }
-
     .form-actions {
       display: flex;
       justify-content: flex-end;
       gap: 10px;
       margin-top: 8px;
     }
-    .btn-cancelar {
-      border-color: #ddd;
-      color: var(--color-muted);
-      border-radius: 10px;
-    }
+    .btn-cancelar { border-color: #ddd; color: var(--color-muted); border-radius: 10px; }
     .btn-salvar {
       background: linear-gradient(135deg, #3949ab, #5c6bc0);
       color: #fff;
@@ -178,7 +169,6 @@ function telefoneValidator(control: { value: string }) {
       font-weight: 500;
       mat-icon { font-size: 18px; width: 18px; height: 18px; }
     }
-
     @media (max-width: 480px) {
       .form-row { grid-template-columns: 1fr; gap: 0; }
     }
@@ -214,9 +204,13 @@ export class UsuarioFormComponent implements OnChanges {
   submeter(): void {
     if (this.form.invalid) return;
     const valor = this.form.getRawValue();
-    const payload = this.usuarioEdicao
-      ? { ...valor, id: this.usuarioEdicao.id }
-      : valor;
+    // Remove máscaras antes de enviar
+    const payload = {
+      ...valor,
+      cpf:      valor.cpf?.replace(/\D/g, ''),
+      telefone: valor.telefone?.replace(/\D/g, ''),
+      ...(this.usuarioEdicao ? { id: this.usuarioEdicao.id } : {}),
+    };
     this.submeterForm.emit(payload);
   }
 }
