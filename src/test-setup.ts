@@ -6,12 +6,8 @@ import {
   platformBrowserDynamicTesting,
 } from '@angular/platform-browser-dynamic/testing';
 
-// Guard: só inicializa se ainda não foi inicializado
-const tb = getTestBed() as any;
-if (!tb._instantiated) {
-  getTestBed().initTestEnvironment(
-    BrowserDynamicTestingModule,
-    platformBrowserDynamicTesting(),
-    { teardown: { destroyAfterEach: true } },
-  );
-}
+getTestBed().initTestEnvironment(
+  BrowserDynamicTestingModule,
+  platformBrowserDynamicTesting(),
+  { teardown: { destroyAfterEach: true } },
+);
