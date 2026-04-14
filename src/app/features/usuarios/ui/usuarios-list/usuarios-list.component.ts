@@ -3,7 +3,7 @@ import {
   Component,
   inject,
 } from '@angular/core';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,7 +25,6 @@ import { UsuarioCardComponent } from '../usuario-card/usuario-card.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    NgIf,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -50,8 +49,8 @@ import { UsuarioCardComponent } from '../usuario-card/usuario-card.component';
     }
 
     <!-- Lista de cards -->
-    @if (!(loading$ | async)) {
-      <ng-container *ngIf="usuarios$ | async as usuarios">
+    @if (usuarios$ | async; as usuarios) {
+      @if (!loading$) {
         @if (usuarios.length === 0) {
           <div class="empty-state">
             <mat-icon>group_off</mat-icon>
@@ -64,7 +63,7 @@ import { UsuarioCardComponent } from '../usuario-card/usuario-card.component';
             }
           </div>
         }
-      </ng-container>
+      }
     }
   `,
   styles: [`
