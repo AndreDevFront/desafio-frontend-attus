@@ -6,12 +6,14 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  inject,
 } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Usuario, TipoTelefone } from '../../data-access/models/usuario.model';
 
@@ -35,82 +37,93 @@ function telefoneValidator(control: { value: string }) {
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatIconModule,
     MatProgressSpinnerModule,
   ],
   template: `
     <form [formGroup]="form" (ngSubmit)="submeter()" class="form">
 
-      <!-- Nome -->
-      <mat-form-field appearance="outline">
-        <mat-label>Nome</mat-label>
-        <input matInput formControlName="nome" placeholder="Nome completo" />
-        @if (form.get('nome')?.hasError('required') && form.get('nome')?.touched) {
-          <mat-error>Nome é obrigatório.</mat-error>
-        }
-      </mat-form-field>
+      <!-- Linha 1: Nome + Email -->
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Nome completo</mat-label>
+          <mat-icon matPrefix>person_outline</mat-icon>
+          <input matInput formControlName="nome" placeholder="João da Silva" />
+          @if (form.get('nome')?.hasError('required') && form.get('nome')?.touched) {
+            <mat-error>Nome é obrigatório.</mat-error>
+          }
+        </mat-form-field>
 
-      <!-- E-mail -->
-      <mat-form-field appearance="outline">
-        <mat-label>E-mail</mat-label>
-        <input matInput formControlName="email" type="email" placeholder="email@exemplo.com" />
-        @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
-          <mat-error>E-mail é obrigatório.</mat-error>
-        }
-        @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
-          <mat-error>Formato de e-mail inválido.</mat-error>
-        }
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>E-mail</mat-label>
+          <mat-icon matPrefix>mail_outline</mat-icon>
+          <input matInput formControlName="email" type="email" placeholder="email@exemplo.com" />
+          @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+            <mat-error>E-mail é obrigatório.</mat-error>
+          }
+          @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+            <mat-error>Formato de e-mail inválido.</mat-error>
+          }
+        </mat-form-field>
+      </div>
 
-      <!-- CPF -->
-      <mat-form-field appearance="outline">
-        <mat-label>CPF</mat-label>
-        <input matInput formControlName="cpf" placeholder="000.000.000-00" />
-        @if (form.get('cpf')?.hasError('required') && form.get('cpf')?.touched) {
-          <mat-error>CPF é obrigatório.</mat-error>
-        }
-        @if (form.get('cpf')?.hasError('cpfInvalido') && form.get('cpf')?.touched) {
-          <mat-error>CPF deve conter 11 dígitos.</mat-error>
-        }
-      </mat-form-field>
+      <!-- Linha 2: CPF + Telefone -->
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>CPF</mat-label>
+          <mat-icon matPrefix>badge</mat-icon>
+          <input matInput formControlName="cpf" placeholder="000.000.000-00" />
+          @if (form.get('cpf')?.hasError('required') && form.get('cpf')?.touched) {
+            <mat-error>CPF é obrigatório.</mat-error>
+          }
+          @if (form.get('cpf')?.hasError('cpfInvalido') && form.get('cpf')?.touched) {
+            <mat-error>CPF deve conter 11 dígitos.</mat-error>
+          }
+        </mat-form-field>
 
-      <!-- Telefone -->
-      <mat-form-field appearance="outline">
-        <mat-label>Telefone</mat-label>
-        <input matInput formControlName="telefone" placeholder="(00) 00000-0000" />
-        @if (form.get('telefone')?.hasError('required') && form.get('telefone')?.touched) {
-          <mat-error>Telefone é obrigatório.</mat-error>
-        }
-        @if (form.get('telefone')?.hasError('telefoneInvalido') && form.get('telefone')?.touched) {
-          <mat-error>Telefone deve ter 10 ou 11 dígitos.</mat-error>
-        }
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Telefone</mat-label>
+          <mat-icon matPrefix>phone</mat-icon>
+          <input matInput formControlName="telefone" placeholder="(00) 00000-0000" />
+          @if (form.get('telefone')?.hasError('required') && form.get('telefone')?.touched) {
+            <mat-error>Telefone é obrigatório.</mat-error>
+          }
+          @if (form.get('telefone')?.hasError('telefoneInvalido') && form.get('telefone')?.touched) {
+            <mat-error>Telefone deve ter 10 ou 11 dígitos.</mat-error>
+          }
+        </mat-form-field>
+      </div>
 
       <!-- Tipo de telefone -->
       <mat-form-field appearance="outline">
         <mat-label>Tipo de telefone</mat-label>
+        <mat-icon matPrefix>settings_phone</mat-icon>
         <mat-select formControlName="tipoTelefone">
-          <mat-option value="celular">Celular</mat-option>
-          <mat-option value="residencial">Residencial</mat-option>
-          <mat-option value="comercial">Comercial</mat-option>
+          <mat-option value="celular">📱 Celular</mat-option>
+          <mat-option value="residencial">🏠 Residencial</mat-option>
+          <mat-option value="comercial">🏢 Comercial</mat-option>
         </mat-select>
         @if (form.get('tipoTelefone')?.hasError('required') && form.get('tipoTelefone')?.touched) {
           <mat-error>Tipo de telefone é obrigatório.</mat-error>
         }
       </mat-form-field>
 
-      <!-- Rodapé -->
+      <!-- Ações -->
       <div class="form-actions">
-        <button type="button" mat-stroked-button (click)="cancelar.emit()">Cancelar</button>
+        <button type="button" mat-stroked-button class="btn-cancelar" (click)="cancelar.emit()">
+          Cancelar
+        </button>
         <button
           type="submit"
           mat-flat-button
-          color="primary"
+          class="btn-salvar"
           [disabled]="form.invalid || salvando"
         >
           @if (salvando) {
             <mat-spinner diameter="20" />
           } @else {
-            {{ usuarioEdicao ? 'Salvar alterações' : 'Cadastrar' }}
+            <mat-icon>{{ usuarioEdicao ? 'save' : 'person_add' }}</mat-icon>
+            {{ usuarioEdicao ? 'Salvar alterações' : 'Cadastrar usuário' }}
           }
         </button>
       </div>
@@ -120,14 +133,38 @@ function telefoneValidator(control: { value: string }) {
     .form {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      mat-form-field { width: 100%; }
+      gap: 0;
     }
+    mat-form-field { width: 100%; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 12px;
+    }
+
     .form-actions {
       display: flex;
       justify-content: flex-end;
-      gap: 12px;
+      gap: 10px;
       margin-top: 8px;
+    }
+    .btn-cancelar {
+      border-color: #ddd;
+      color: var(--color-muted);
+      border-radius: 10px;
+    }
+    .btn-salvar {
+      background: linear-gradient(135deg, #3949ab, #5c6bc0);
+      color: #fff;
+      border-radius: 10px;
+      gap: 6px;
+      font-weight: 500;
+      mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    }
+
+    @media (max-width: 480px) {
+      .form-row { grid-template-columns: 1fr; gap: 0; }
     }
   `],
 })
@@ -138,8 +175,9 @@ export class UsuarioFormComponent implements OnChanges {
   @Output() readonly cancelar     = new EventEmitter<void>();
 
   readonly form: FormGroup;
+  private readonly fb = inject(FormBuilder);
 
-  constructor(private readonly fb: FormBuilder) {
+  constructor() {
     this.form = this.fb.group({
       nome:         ['', Validators.required],
       email:        ['', [Validators.required, Validators.email]],

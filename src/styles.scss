@@ -1,33 +1,55 @@
-// Angular Material Theme
 @use '@angular/material' as mat;
 
 @include mat.core();
 
-$primary: mat.define-palette(mat.$indigo-palette);
-$accent:  mat.define-palette(mat.$red-palette, A200, A100, A400);
-$warn:    mat.define-palette(mat.$red-palette);
+$primary-palette: mat.define-palette(mat.$indigo-palette, 700);
+$accent-palette:  mat.define-palette(mat.$pink-palette, A200);
+$warn-palette:    mat.define-palette(mat.$red-palette);
 
 $theme: mat.define-light-theme((
   color: (
-    primary: $primary,
-    accent: $accent,
-    warn: $warn,
+    primary: $primary-palette,
+    accent:  $accent-palette,
+    warn:    $warn-palette,
   ),
-  typography: mat.define-typography-config(),
-  density: 0,
+  typography: mat.define-typography-config(
+    $font-family: 'Roboto, sans-serif'
+  ),
 ));
 
 @include mat.all-component-themes($theme);
 
-// Reset & base
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: #f0f2f5;
+  min-height: 100vh;
+  color: #1a1a2e;
 }
 
-html, body {
-  height: 100%;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
-  background-color: #f5f5f5;
+:root {
+  --color-primary:    #3949ab;
+  --color-primary-dk: #283593;
+  --color-accent:     #e91e63;
+  --color-surface:    #ffffff;
+  --color-bg:         #f0f2f5;
+  --color-text:       #1a1a2e;
+  --color-muted:      #6b7280;
+  --color-border:     rgba(0,0,0,0.08);
+  --color-avatar-1:   #3949ab;
+  --color-avatar-2:   #00897b;
+  --color-avatar-3:   #e53935;
+  --color-avatar-4:   #8e24aa;
+  --color-avatar-5:   #f57c00;
+  --radius-card:      16px;
+  --radius-modal:     20px;
+  --shadow-card:      0 2px 8px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.04);
+  --shadow-card-hover:0 8px 24px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.06);
+  --shadow-modal:     0 24px 64px rgba(0,0,0,0.18);
+}
+
+.snack-erro .mdc-snackbar__surface {
+  background: #c62828 !important;
+  color: #fff !important;
 }
