@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  OnInit,
 } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -51,20 +50,20 @@ import { UsuarioCardComponent } from '../usuario-card/usuario-card.component';
 
     <!-- Lista de cards -->
     @if (!(loading$ | async)) {
-      @let usuarios = (usuarios$ | async) ?? [];
-
-      @if (usuarios.length === 0) {
-        <div class="empty-state">
-          <mat-icon>group_off</mat-icon>
-          <p>Nenhum usuário encontrado.</p>
-        </div>
-      } @else {
-        <div class="usuarios-grid">
-          @for (usuario of usuarios; track usuario.id) {
-            <app-usuario-card [usuario]="usuario" />
-          }
-        </div>
-      }
+      <ng-container *ngIf="usuarios$ | async as usuarios">
+        @if (usuarios.length === 0) {
+          <div class="empty-state">
+            <mat-icon>group_off</mat-icon>
+            <p>Nenhum usuário encontrado.</p>
+          </div>
+        } @else {
+          <div class="usuarios-grid">
+            @for (usuario of usuarios; track usuario.id) {
+              <app-usuario-card [usuario]="usuario" />
+            }
+          </div>
+        }
+      </ng-container>
     }
   `,
   styles: [`

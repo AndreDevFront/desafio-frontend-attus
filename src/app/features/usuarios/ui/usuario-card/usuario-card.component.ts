@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import { TitleCasePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,7 +12,7 @@ import { abrirModalUsuario } from '../../data-access/store/usuarios.actions';
   selector: 'app-usuario-card',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCardModule, MatButtonModule, MatIconModule, MatChipsModule],
+  imports: [TitleCasePipe, MatCardModule, MatButtonModule, MatIconModule, MatChipsModule],
   template: `
     <mat-card class="usuario-card">
       <mat-card-header>
