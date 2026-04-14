@@ -35,11 +35,15 @@ import { UsuarioCardComponent } from '../usuario-card/usuario-card.component';
   template: `
     <!-- Barra de busca + contador -->
     <div class="list-toolbar">
-      <mat-form-field appearance="outline" class="campo-busca">
-        <mat-label>Buscar usuário</mat-label>
-        <mat-icon matPrefix class="search-icon">search</mat-icon>
-        <input matInput [formControl]="campoBusca" placeholder="Digite o nome..." />
-      </mat-form-field>
+      <div class="search-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input
+          class="search-input"
+          [formControl]="campoBusca"
+          placeholder="Buscar usuário por nome..."
+          aria-label="Buscar usuário"
+        />
+      </div>
 
       @if (usuarios$ | async; as usuarios) {
         <span class="contador">
@@ -90,16 +94,49 @@ import { UsuarioCardComponent } from '../usuario-card/usuario-card.component';
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
       flex-wrap: wrap;
     }
-    .campo-busca {
+
+    /* Campo de busca customizado */
+    .search-wrapper {
       flex: 1;
       min-width: 220px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       background: #fff;
-      border-radius: 12px;
-      .search-icon { color: #9e9e9e; margin-right: 4px; }
+      border: 1.5px solid #e0e0e0;
+      border-radius: 14px;
+      padding: 0 16px;
+      height: 48px;
+      transition: border-color 180ms, box-shadow 180ms;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+
+      &:focus-within {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(57,73,171,0.10);
+      }
     }
+    .search-icon {
+      color: #9e9e9e;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 0.92rem;
+      color: var(--color-text);
+      font-family: 'Roboto', sans-serif;
+      &::placeholder { color: #aaa; }
+    }
+
+    /* Contador */
     .contador {
       font-size: 0.85rem;
       color: var(--color-muted);

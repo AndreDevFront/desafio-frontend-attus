@@ -16,6 +16,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Usuario, TipoTelefone } from '../../data-access/models/usuario.model';
+import { CpfMaskDirective } from '../../../../shared/directives/cpf-mask.directive';
+import { TelefoneMaskDirective } from '../../../../shared/directives/telefone-mask.directive';
 
 function cpfValidator(control: { value: string }) {
   const cpf = control.value?.replace(/\D/g, '');
@@ -39,6 +41,8 @@ function telefoneValidator(control: { value: string }) {
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    CpfMaskDirective,
+    TelefoneMaskDirective,
   ],
   template: `
     <form [formGroup]="form" (ngSubmit)="submeter()" class="form">
@@ -72,7 +76,13 @@ function telefoneValidator(control: { value: string }) {
         <mat-form-field appearance="outline">
           <mat-label>CPF</mat-label>
           <mat-icon matPrefix>badge</mat-icon>
-          <input matInput formControlName="cpf" placeholder="000.000.000-00" />
+          <input
+            matInput
+            formControlName="cpf"
+            placeholder="000.000.000-00"
+            appCpfMask
+            maxlength="14"
+          />
           @if (form.get('cpf')?.hasError('required') && form.get('cpf')?.touched) {
             <mat-error>CPF é obrigatório.</mat-error>
           }
@@ -84,7 +94,13 @@ function telefoneValidator(control: { value: string }) {
         <mat-form-field appearance="outline">
           <mat-label>Telefone</mat-label>
           <mat-icon matPrefix>phone</mat-icon>
-          <input matInput formControlName="telefone" placeholder="(00) 00000-0000" />
+          <input
+            matInput
+            formControlName="telefone"
+            placeholder="(00) 00000-0000"
+            appTelefoneMask
+            maxlength="15"
+          />
           @if (form.get('telefone')?.hasError('required') && form.get('telefone')?.touched) {
             <mat-error>Telefone é obrigatório.</mat-error>
           }
