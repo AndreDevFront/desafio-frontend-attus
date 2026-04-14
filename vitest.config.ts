@@ -1,6 +1,9 @@
-import { defineConfig } from 'vitest/config';
+/// <reference types="vitest" />
+import { defineConfig } from 'vite';
+import angular from '@analogjs/vitest-angular/plugin';
 
 export default defineConfig({
+  plugins: [angular()],
   test: {
     globals: true,
     environment: 'jsdom',

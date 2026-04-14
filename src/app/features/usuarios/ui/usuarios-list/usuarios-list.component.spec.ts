@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { UsuariosListComponent } from './usuarios-list.component';
@@ -45,16 +45,24 @@ describe('UsuariosListComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('deve criar o componente', () => {
     expect(component).toBeTruthy();
   });
 
-  it('deve despachar setFiltroNome após debounce ao digitar no campo de busca', fakeAsync(() => {
+  it('deve despachar setFiltroNome após debounce ao digitar no campo de busca', async () => {
+    vi.useFakeTimers();
     const dispatchSpy = vi.spyOn(store, 'dispatch');
+
     component.campoBusca.setValue('Ana');
-    tick(300);
+    vi.advanceTimersByTime(300);
+    await Promise.resolve(); // flush microtasks
+
     expect(dispatchSpy).toHaveBeenCalledWith(setFiltroNome({ filtro: 'Ana' }));
-  }));
+  });
 
   it('deve despachar setPagina ao mudar página no paginador', () => {
     const dispatchSpy = vi.spyOn(store, 'dispatch');
