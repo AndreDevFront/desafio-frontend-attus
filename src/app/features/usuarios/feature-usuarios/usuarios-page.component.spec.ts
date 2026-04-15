@@ -1,8 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { provideMockActions } from '@ngrx/effects/testing';
+import { Observable, Subject } from 'rxjs';
+import { Action } from '@ngrx/store';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { UsuariosPageComponent } from './usuarios-page.component';
-import { loadUsuarios, abrirModalUsuario } from '../data-access/store/usuarios.actions';
+import {
+  loadUsuarios,
+  abrirModalUsuario,
+  salvarUsuarioSuccess,
+  salvarUsuarioError,
+  deletarUsuarioSuccess,
+  deletarUsuarioError,
+} from '../data-access/store/usuarios.actions';
 import { selectErro } from '../data-access/store/usuarios.selectors';
 import {
   selectUsuariosPaginados,
@@ -14,13 +25,24 @@ import {
   selectUsuarioEdicao,
   selectSalvando,
 } from '../data-access/store/usuarios.selectors';
+import { Usuario } from '../data-access/models/usuario.model';
+
+const usuarioMock: Usuario = {
+  id: '1', nome: 'Ana Silva', email: 'ana@email.com',
+  cpf: '12345678900', telefone: '54999990001', tipoTelefone: 'celular',
+};
 
 describe('UsuariosPageComponent', () => {
   let fixture: ComponentFixture<UsuariosPageComponent>;
   let component: UsuariosPageComponent;
   let store: MockStore;
+  let snackBar: jest.Mocked<MatSnackBar>;
+  let actions$: Subject<Action>;
 
   beforeEach(async () => {
+    actions$ = new Subject<Action>();
+    const snackMock = { open: jest.fn() };
+
     await TestBed.configureTestingModule({
       imports: [UsuariosPageComponent, NoopAnimationsModule],
       providers: [
@@ -37,12 +59,15 @@ describe('UsuariosPageComponent', () => {
             { selector: selectTamanhoPagina,      value: 6     },
           ],
         }),
+        provideMockActions(() => actions$),
+        { provide: MatSnackBar, useValue: snackMock },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(UsuariosPageComponent);
+    fixture   = TestBed.createComponent(UsuariosPageComponent);
     component = fixture.componentInstance;
-    store = TestBed.inject(MockStore);
+    store     = TestBed.inject(MockStore);
+    snackBar  = TestBed.inject(MatSnackBar) as jest.Mocked<MatSnackBar>;
     fixture.detectChanges();
   });
 
@@ -51,23 +76,56 @@ describe('UsuariosPageComponent', () => {
   });
 
   it('deve despachar loadUsuarios no ngOnInit', () => {
-    const dispatchSpy = jest.spyOn(store, 'dispatch');
+    const dispatch = jest.spyOn(store, 'dispatch');
     component.ngOnInit();
-    expect(dispatchSpy).toHaveBeenCalledWith(loadUsuarios());
+    expect(dispatch).toHaveBeenCalledWith(loadUsuarios());
   });
 
   it('deve despachar abrirModalUsuario com null ao chamar abrirModalNovo()', () => {
-    const dispatchSpy = jest.spyOn(store, 'dispatch');
+    const dispatch = jest.spyOn(store, 'dispatch');
     component.abrirModalNovo();
-    expect(dispatchSpy).toHaveBeenCalledWith(
-      abrirModalUsuario({ usuario: null })
-    );
+    expect(dispatch).toHaveBeenCalledWith(abrirModalUsuario({ usuario: null }));
   });
 
-  it('deve exibir snackbar quando erro emitir valor', () => {
+  it('deve exibir snackbar de erro quando selectErro emitir valor', () => {
     store.overrideSelector(selectErro, 'Erro de rede');
     store.refreshState();
     fixture.detectChanges();
-    expect(component).toBeTruthy();
+    expect(snackBar.open).toHaveBeenCalledWith(
+      'Erro de rede', 'Fechar',
+      expect.objectContaining({ panelClass: ['snack-erro'] })
+    );
+  });
+
+  it('deve exibir snackbar de sucesso ao receber salvarUsuarioSuccess', () => {
+    actions$.next(salvarUsuarioSuccess({ usuario: usuarioMock }));
+    expect(snackBar.open).toHaveBeenCalledWith(
+      '✅ Ana Silva salvo com sucesso!', 'Fechar',
+      expect.objectContaining({ panelClass: ['snack-sucesso'] })
+    );
+  });
+
+  it('deve exibir snackbar de erro ao receber salvarUsuarioError', () => {
+    actions$.next(salvarUsuarioError({ erro: 'Falha na conexão' }));
+    expect(snackBar.open).toHaveBeenCalledWith(
+      '❌ Erro ao salvar: Falha na conexão', 'Fechar',
+      expect.objectContaining({ panelClass: ['snack-erro'] })
+    );
+  });
+
+  it('deve exibir snackbar de sucesso ao receber deletarUsuarioSuccess', () => {
+    actions$.next(deletarUsuarioSuccess({ id: '1' }));
+    expect(snackBar.open).toHaveBeenCalledWith(
+      '🗑️ Usuário excluído com sucesso!', 'Fechar',
+      expect.objectContaining({ panelClass: ['snack-sucesso'] })
+    );
+  });
+
+  it('deve exibir snackbar de erro ao receber deletarUsuarioError', () => {
+    actions$.next(deletarUsuarioError({ id: '1', erro: 'Timeout' }));
+    expect(snackBar.open).toHaveBeenCalledWith(
+      '❌ Erro ao excluir: Timeout', 'Fechar',
+      expect.objectContaining({ panelClass: ['snack-erro'] })
+    );
   });
 });

@@ -60,7 +60,7 @@ npm run test:watch
 npm run test:coverage
 ```
 
-> Cobertura atual: **~80% statements · ~71% branches · ~70% functions · ~83% lines** — acima do threshold de 60% em todas as métricas.
+> Cobertura: **~90% statements · ~96% branches · ~82% functions · ~93% lines** — acima do threshold de 60% em todas as métricas.
 
 ---
 
@@ -73,9 +73,9 @@ src/
     │   └── usuarios/
     │       ├── data-access/
     │       │   ├── models/
-    │       │   │   └── usuario.model.ts         # Interface Usuario e tipo TipoTelefone
+    │       │   │   └── usuario.model.ts
     │       │   ├── services/
-    │       │   │   ├── usuarios.service.ts      # CRUD mock com delay assíncrono
+    │       │   │   ├── usuarios.service.ts
     │       │   │   └── usuarios.service.spec.ts
     │       │   └── store/
     │       │       ├── usuarios.actions.ts
@@ -86,26 +86,29 @@ src/
     │       │       ├── usuarios.effects.ts
     │       │       └── usuarios.effects.spec.ts
     │       ├── feature-usuarios/
-    │       │   ├── usuarios-page.component.ts   # Componente raiz da feature
+    │       │   ├── usuarios-page.component.ts
     │       │   └── usuarios-page.component.spec.ts
     │       └── ui/
     │           ├── usuario-card/
     │           │   ├── usuario-card.component.ts
     │           │   └── usuario-card.component.spec.ts
     │           ├── usuario-form/
-    │           │   ├── usuario-form.component.ts # Formulário reativo com máscaras
+    │           │   ├── usuario-form.component.ts
     │           │   └── usuario-form.component.spec.ts
     │           ├── usuario-modal/
-    │           │   ├── usuario-modal.component.ts # Modal de criação/edição
+    │           │   ├── usuario-modal.component.ts
     │           │   └── usuario-modal.component.spec.ts
     │           └── usuarios-list/
-    │               ├── usuarios-list.component.ts # Listagem com busca e paginação
+    │               ├── usuarios-list.component.ts
     │               └── usuarios-list.component.spec.ts
     └── shared/
+        ├── components/
+        │   └── confirm-dialog/
+        │       └── confirm-dialog.component.ts  # Modal de confirmação reutilizável
         └── directives/
-            ├── cpf-mask.directive.ts            # Máscara 000.000.000-00
+            ├── cpf-mask.directive.ts
             ├── cpf-mask.directive.spec.ts
-            ├── telefone-mask.directive.ts       # Máscara (00) 00000-0000
+            ├── telefone-mask.directive.ts
             └── telefone-mask.directive.spec.ts
 ```
 
@@ -114,7 +117,7 @@ src/
 ## ✅ Funcionalidades implementadas
 
 ### Listagem de usuários
-- Cards com nome, e-mail, tipo de telefone e botão de editar
+- Cards com nome, e-mail, tipo de telefone e botões de editar e excluir
 - **Filtro por nome** com `debounceTime(300ms)` e `distinctUntilChanged`
 - **Paginação** com `MatPaginator` (6, 12 ou 24 itens por página)
 - Skeleton loading animado durante o carregamento
@@ -129,11 +132,21 @@ src/
 - Botão salvar desabilitado enquanto o formulário for inválido
 - Preenchimento automático ao editar
 
+### Exclusão de usuário
+- Botão de exclusão no card com `MatDialog` de confirmação
+- Botão fica desabilitado e exibe ⏳ durante o request
+- Feedback visual após exclusão via `MatSnackBar`
+
+### Feedback visual (MatSnackBar)
+- ✅ Sucesso ao salvar usuário
+- ✅ Sucesso ao excluir usuário
+- ❌ Erro ao salvar, carregar ou excluir
+
 ### Gerenciamento de estado (NgRx)
-- `Actions`: `loadUsuarios`, `salvarUsuario`, `setFiltroNome`, `setPagina`, `setTamanhoPagina`, `abrirModalUsuario`, `fecharModalUsuario`
-- `Reducer`: estado imutável com tipagem forte
+- `Actions`: `loadUsuarios`, `salvarUsuario`, `deletarUsuario`, `setFiltroNome`, `setPagina`, `setTamanhoPagina`, `abrirModalUsuario`, `fecharModalUsuario`
+- `Reducer`: estado imutável com `deletando: Set<string>` para rastrear deletes em andamento
 - `Selectors`: `selectUsuariosFiltrados`, `selectUsuariosPaginados`, `selectTotalFiltrados`, `selectModalAberto`, `selectSalvando`
-- `Effects`: fluxo assíncrono com `switchMap` + `catchError`
+- `Effects`: `loadUsuarios$`, `salvarUsuario$`, `deletarUsuario$` com `switchMap` + `catchError`
 
 ---
 
@@ -141,17 +154,17 @@ src/
 
 | Arquivo | O que é testado |
 |---|---|
-| `usuarios.reducer.spec.ts` | Todos os casos do reducer (estado inicial, load, save, filtro, paginação, modal) |
+| `usuarios.reducer.spec.ts` | Todos os casos: load, save, delete (deletando Set), filtro, paginação, modal |
 | `usuarios.selectors.spec.ts` | Selectors de filtro, paginação e totais |
-| `usuarios.effects.spec.ts` | Efeitos assíncronos de load e save com mock do service |
+| `usuarios.effects.spec.ts` | load, save e delete — caminhos de sucesso, erro com message e erro sem message |
 | `usuarios.service.spec.ts` | CRUD completo do service mock |
-| `usuarios-page.component.spec.ts` | Renderização e integração com o store |
+| `usuarios-page.component.spec.ts` | Snackbar de sucesso/erro para save e delete, dispatch de load e abrirModal |
 | `cpf-mask.directive.spec.ts` | Máscara, remoção de não-numéricos, limite de 11 dígitos, sync com FormControl |
 | `telefone-mask.directive.spec.ts` | Máscara fixo/celular, remoção de não-numéricos, limite de 11 dígitos, sync com FormControl |
-| `usuario-card.component.spec.ts` | Renderização, getters (inicial, tipoIcon, bgAvatar), dispatch de editar |
+| `usuario-card.component.spec.ts` | Renderização, getters (inicial, tipoIcon, bgAvatar), fallback, dispatch de editar |
 | `usuario-form.component.spec.ts` | Validações, ngOnChanges (editar/reset), submeter com/sem id, cancelar |
 | `usuario-modal.component.spec.ts` | fechar, fecharBackdrop, salvar (criar e editar), seletores do store |
-| `usuarios-list.component.spec.ts` | Busca com debounce, mudança de página, mudança de pageSize, seletores |
+| `usuarios-list.component.spec.ts` | Busca com debounce, mudança de página/pageSize, seletores |
 
 ---
 
@@ -159,9 +172,10 @@ src/
 
 | Requisito | Implementação |
 |---|---|
-| 2+ operadores RxJS além de `map`/`tap` | `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchError`, `takeUntilDestroyed` |
+| 2+ operadores RxJS além de `map`/`tap` | `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchError`, `filter`, `takeUntilDestroyed` |
 | Componentes standalone | Todos os componentes usam `standalone: true` |
 | Sem memory leaks | `takeUntilDestroyed`, `async pipe`, `OnPush` |
-| Cobertura de testes > 60% | Reducer, selectors, effects, service, diretivas e todos os componentes UI testados |
+| Cobertura de testes > 60% | Todos os arquivos da feature cobertos |
 | Máscaras de validação *(diferencial)* | Diretivas puras Angular sem biblioteca externa |
 | Paginação *(diferencial)* | `MatPaginator` integrado ao NgRx store |
+| CRUD completo *(diferencial)* | Criar, editar e excluir com confirmação e feedback visual |
