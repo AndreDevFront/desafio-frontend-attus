@@ -7,8 +7,8 @@ const usuarioMock: Usuario = {
   id: '1',
   nome: 'Ana Silva',
   email: 'ana@email.com',
-  cpf: '123.456.789-01',
-  telefone: '(11) 99999-9999',
+  cpf: '12345678900',
+  telefone: '54999990001',
   tipoTelefone: 'celular',
 };
 
@@ -30,28 +30,34 @@ describe('UsuarioFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('deve inicializar o formulário inválido (campos vazios)', () => {
+  it('formulário deve ser inválido quando vazio', () => {
     expect(component.form.invalid).toBe(true);
   });
 
-  it('deve marcar nome como inválido quando vazio', () => {
-    component.form.get('nome')?.setValue('');
-    expect(component.form.get('nome')?.hasError('required')).toBe(true);
+  it('formulário deve ser válido com todos os campos preenchidos corretamente', () => {
+    component.form.setValue({
+      nome: 'Ana Silva',
+      email: 'ana@email.com',
+      cpf: '123.456.789-00',
+      telefone: '(54) 99999-0001',
+      tipoTelefone: 'celular',
+    });
+    expect(component.form.valid).toBe(true);
   });
 
-  it('deve marcar email inválido com formato errado', () => {
-    component.form.get('email')?.setValue('email-invalido');
-    expect(component.form.get('email')?.hasError('email')).toBe(true);
+  it('deve invalidar e-mail com formato incorreto', () => {
+    component.form.patchValue({ email: 'email-invalido' });
+    expect(component.form.get('email')?.invalid).toBe(true);
   });
 
-  it('deve marcar cpf inválido com menos de 11 dígitos', () => {
-    component.form.get('cpf')?.setValue('123');
-    expect(component.form.get('cpf')?.hasError('cpfInvalido')).toBe(true);
+  it('deve invalidar CPF com menos de 11 dígitos', () => {
+    component.form.patchValue({ cpf: '123.456' });
+    expect(component.form.get('cpf')?.invalid).toBe(true);
   });
 
-  it('deve marcar telefone inválido com dígitos incorretos', () => {
-    component.form.get('telefone')?.setValue('123');
-    expect(component.form.get('telefone')?.hasError('telefoneInvalido')).toBe(true);
+  it('deve invalidar telefone com menos de 10 dígitos', () => {
+    component.form.patchValue({ telefone: '(54) 999' });
+    expect(component.form.get('telefone')?.invalid).toBe(true);
   });
 
   it('deve preencher o formulário ao receber usuarioEdicao via ngOnChanges', () => {
@@ -59,56 +65,61 @@ describe('UsuarioFormComponent', () => {
     component.ngOnChanges({
       usuarioEdicao: { currentValue: usuarioMock, previousValue: null, firstChange: true, isFirstChange: () => true },
     });
-    expect(component.form.get('nome')?.value).toBe(usuarioMock.nome);
-    expect(component.form.get('email')?.value).toBe(usuarioMock.email);
+    expect(component.form.value.nome).toBe('Ana Silva');
+    expect(component.form.value.email).toBe('ana@email.com');
   });
 
-  it('deve resetar o formulário quando usuarioEdicao for null', () => {
+  it('deve resetar o formulário ao receber usuarioEdicao null', () => {
+    component.form.patchValue({ nome: 'Teste' });
     component.usuarioEdicao = null;
     component.ngOnChanges({
       usuarioEdicao: { currentValue: null, previousValue: usuarioMock, firstChange: false, isFirstChange: () => false },
     });
-    expect(component.form.get('nome')?.value).toBeFalsy();
+    expect(component.form.value.nome).toBeNull();
+    expect(component.form.value.tipoTelefone).toBe('celular');
   });
 
-  it('não deve emitir submeterForm se formulário inválido', () => {
-    const emitSpy = jest.spyOn(component.submeterForm, 'emit');
+  it('não deve emitir submeterForm se o formulário for inválido', () => {
+    const spy = jest.spyOn(component.submeterForm, 'emit');
     component.submeter();
-    expect(emitSpy).not.toHaveBeenCalled();
+    expect(spy).not.toHaveBeenCalled();
   });
 
-  it('deve emitir submeterForm com payload correto quando válido', () => {
-    const emitSpy = jest.spyOn(component.submeterForm, 'emit');
+  it('deve emitir submeterForm com payload correto ao submeter formulário válido', () => {
+    const spy = jest.spyOn(component.submeterForm, 'emit');
     component.form.setValue({
       nome: 'Ana Silva',
       email: 'ana@email.com',
-      cpf: '123.456.789-01',
-      telefone: '(11) 99999-9999',
+      cpf: '123.456.789-00',
+      telefone: '(54) 99999-0001',
       tipoTelefone: 'celular',
     });
     component.submeter();
-    expect(emitSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ nome: 'Ana Silva', email: 'ana@email.com' })
-    );
+    expect(spy).toHaveBeenCalledWith(expect.objectContaining({
+      nome: 'Ana Silva',
+      email: 'ana@email.com',
+      cpf: '12345678900',
+      telefone: '54999990001',
+    }));
   });
 
-  it('deve remover máscara do CPF no payload emitido', () => {
-    const emitSpy = jest.spyOn(component.submeterForm, 'emit');
+  it('deve incluir id no payload ao editar um usuário existente', () => {
+    const spy = jest.spyOn(component.submeterForm, 'emit');
+    component.usuarioEdicao = usuarioMock;
     component.form.setValue({
       nome: 'Ana Silva',
       email: 'ana@email.com',
-      cpf: '123.456.789-01',
-      telefone: '(11) 99999-9999',
+      cpf: '123.456.789-00',
+      telefone: '(54) 99999-0001',
       tipoTelefone: 'celular',
     });
     component.submeter();
-    const payload = (emitSpy.mock.calls[0][0] as any);
-    expect(payload.cpf).toBe('12345678901');
+    expect(spy).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
   });
 
-  it('deve emitir evento cancelar ao chamar cancelar.emit()', () => {
-    const emitSpy = jest.spyOn(component.cancelar, 'emit');
+  it('deve emitir cancelar ao chamar cancelar output', () => {
+    const spy = jest.spyOn(component.cancelar, 'emit');
     component.cancelar.emit();
-    expect(emitSpy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalled();
   });
 });

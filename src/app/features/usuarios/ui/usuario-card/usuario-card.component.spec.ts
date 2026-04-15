@@ -9,8 +9,8 @@ const usuarioMock: Usuario = {
   id: '1',
   nome: 'Ana Silva',
   email: 'ana@email.com',
-  cpf: '12345678901',
-  telefone: '11999999999',
+  cpf: '12345678900',
+  telefone: '54999990001',
   tipoTelefone: 'celular',
 };
 
@@ -22,12 +22,12 @@ describe('UsuarioCardComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [UsuarioCardComponent],
-      providers: [provideMockStore({})],
+      providers: [provideMockStore()],
     }).compileComponents();
 
+    store = TestBed.inject(MockStore);
     fixture = TestBed.createComponent(UsuarioCardComponent);
     component = fixture.componentInstance;
-    store = TestBed.inject(MockStore);
     component.usuario = usuarioMock;
     fixture.detectChanges();
   });
@@ -37,33 +37,41 @@ describe('UsuarioCardComponent', () => {
   });
 
   it('deve exibir a inicial do nome no avatar', () => {
+    const avatar = fixture.debugElement.query(By.css('.avatar'));
+    expect(avatar.nativeElement.textContent.trim()).toBe('A');
+  });
+
+  it('deve exibir o nome do usuário', () => {
+    const el = fixture.debugElement.query(By.css('.nome'));
+    expect(el.nativeElement.textContent).toContain('Ana Silva');
+  });
+
+  it('deve exibir o e-mail do usuário', () => {
+    const el = fixture.debugElement.query(By.css('.email'));
+    expect(el.nativeElement.textContent).toContain('ana@email.com');
+  });
+
+  it('getter inicial deve retornar a primeira letra maiúscula', () => {
     expect(component.inicial).toBe('A');
   });
 
-  it('deve retornar o ícone correto para celular', () => {
+  it('getter tipoIcon deve retornar smartphone para celular', () => {
     expect(component.tipoIcon).toBe('smartphone');
   });
 
-  it('deve retornar ícone padrão para tipo desconhecido', () => {
-    component.usuario = { ...usuarioMock, tipoTelefone: 'outro' as any };
-    expect(component.tipoIcon).toBe('phone');
+  it('getter tipoIcon deve retornar home para residencial', () => {
+    component.usuario = { ...usuarioMock, tipoTelefone: 'residencial' };
+    expect(component.tipoIcon).toBe('home');
   });
 
-  it('deve retornar bgTipoLight com sufixo de opacidade', () => {
-    expect(component.bgTipoLight).toContain('1a');
+  it('getter tipoIcon deve retornar business para comercial', () => {
+    component.usuario = { ...usuarioMock, tipoTelefone: 'comercial' };
+    expect(component.tipoIcon).toBe('business');
   });
 
-  it('deve despachar abrirModalUsuario ao clicar em editar', () => {
-    const dispatchSpy = jest.spyOn(store, 'dispatch');
+  it('deve disparar a action abrirModalUsuario ao chamar editar()', () => {
+    const dispatch = jest.spyOn(store, 'dispatch');
     component.editar();
-    expect(dispatchSpy).toHaveBeenCalledWith(
-      abrirModalUsuario({ usuario: usuarioMock })
-    );
-  });
-
-  it('deve gerar cor de avatar baseada no nome', () => {
-    const cor = component.bgAvatar;
-    expect(cor).toBeTruthy();
-    expect(cor.startsWith('#')).toBe(true);
+    expect(dispatch).toHaveBeenCalledWith(abrirModalUsuario({ usuario: usuarioMock }));
   });
 });

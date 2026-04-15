@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { TelefoneMaskDirective } from './telefone-mask.directive';
 
@@ -9,61 +9,72 @@ import { TelefoneMaskDirective } from './telefone-mask.directive';
   imports: [TelefoneMaskDirective, ReactiveFormsModule],
   template: `<input appTelefoneMask [formControl]="ctrl" />`,
 })
-class TestComponent {
+class HostComponent {
   ctrl = new FormControl('');
 }
 
 describe('TelefoneMaskDirective', () => {
-  let fixture: ComponentFixture<TestComponent>;
+  let fixture: ComponentFixture<HostComponent>;
   let input: HTMLInputElement;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TestComponent],
+      imports: [HostComponent],
     }).compileComponents();
-    fixture = TestBed.createComponent(TestComponent);
+
+    fixture = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
     input = fixture.debugElement.query(By.css('input')).nativeElement;
   });
 
-  const dispatchInput = (value: string) => {
+  function typeValue(value: string): void {
     input.value = value;
     input.dispatchEvent(new Event('input'));
     fixture.detectChanges();
-  };
+  }
 
-  it('formata celular completo (11 dígitos)', () => {
-    dispatchInput('51999235494');
-    expect(input.value).toBe('(51) 99923-5494');
+  it('deve criar a diretiva', () => {
+    const dir = fixture.debugElement.query(By.directive(TelefoneMaskDirective));
+    expect(dir).toBeTruthy();
   });
 
-  it('formata fixo completo (10 dígitos)', () => {
-    dispatchInput('5133334444');
-    expect(input.value).toBe('(51) 3333-4444');
+  it('não aplica máscara com string vazia', () => {
+    typeValue('');
+    expect(input.value).toBe('');
   });
 
-  it('formata parcialmente com 7 dígitos', () => {
-    dispatchInput('5133334');
-    expect(input.value).toBe('(51) 3333-4');
+  it('aplica parêntese de abertura com 1-2 dígitos', () => {
+    typeValue('54');
+    expect(input.value).toBe('(54');
   });
 
-  it('formata parcialmente com 3 dígitos', () => {
-    dispatchInput('519');
-    expect(input.value).toBe('(51) 9');
+  it('aplica DDD entre parênteses com 3+ dígitos', () => {
+    typeValue('549');
+    expect(input.value).toBe('(54) 9');
   });
 
-  it('ignora caracteres não numéricos', () => {
-    dispatchInput('(51) 99923-5494');
-    expect(input.value).toBe('(51) 99923-5494');
+  it('aplica máscara de fixo com 10 dígitos', () => {
+    typeValue('5433334444');
+    expect(input.value).toBe('(54) 3333-4444');
   });
 
-  it('limita a 11 dígitos', () => {
-    dispatchInput('519992354941234');
-    expect(input.value).toBe('(51) 99923-5494');
+  it('aplica máscara de celular com 11 dígitos', () => {
+    typeValue('54999990001');
+    expect(input.value).toBe('(54) 99999-0001');
   });
 
-  it('atualiza o FormControl com valor formatado', () => {
-    dispatchInput('51999235494');
-    expect(fixture.componentInstance.ctrl.value).toBe('(51) 99923-5494');
+  it('ignora dígitos além do 11º', () => {
+    typeValue('549999900019');
+    expect(input.value).toBe('(54) 99999-0001');
+  });
+
+  it('remove caracteres não numéricos antes de aplicar a máscara', () => {
+    typeValue('(54) 9999-abc');
+    expect(input.value).toBe('(54) 9999');
+  });
+
+  it('atualiza o FormControl com o valor mascarado', () => {
+    typeValue('54999990001');
+    expect(fixture.componentInstance.ctrl.value).toBe('(54) 99999-0001');
   });
 });

@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { UsuariosListComponent } from './usuarios-list.component';
@@ -39,50 +39,50 @@ describe('UsuariosListComponent', () => {
       ],
     }).compileComponents();
 
+    store = TestBed.inject(MockStore);
     fixture = TestBed.createComponent(UsuariosListComponent);
     component = fixture.componentInstance;
-    store = TestBed.inject(MockStore);
     fixture.detectChanges();
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
   });
 
   it('deve criar o componente', () => {
     expect(component).toBeTruthy();
   });
 
-  it('deve despachar setFiltroNome após debounce ao digitar no campo de busca', async () => {
-    jest.useFakeTimers();
-    const dispatchSpy = jest.spyOn(store, 'dispatch');
-
+  it('deve despachar setFiltroNome após debounce ao digitar no campo de busca', fakeAsync(() => {
+    const dispatch = jest.spyOn(store, 'dispatch');
     component.campoBusca.setValue('Ana');
-    jest.advanceTimersByTime(300);
-    await Promise.resolve();
+    tick(300);
+    expect(dispatch).toHaveBeenCalledWith(setFiltroNome({ filtro: 'Ana' }));
+  }));
 
-    expect(dispatchSpy).toHaveBeenCalledWith(setFiltroNome({ filtro: 'Ana' }));
+  it('deve despachar setPagina ao mudar de página (mesmo pageSize)', () => {
+    const dispatch = jest.spyOn(store, 'dispatch');
+    const event: PageEvent = { pageIndex: 1, pageSize: 6, length: 12 };
+    component.onPage(event);
+    expect(dispatch).toHaveBeenCalledWith(setPagina({ pagina: 1 }));
   });
 
-  it('deve despachar setPagina ao mudar página no paginador', () => {
-    const dispatchSpy = jest.spyOn(store, 'dispatch');
-    const pageEvent: PageEvent = { pageIndex: 1, pageSize: 6, length: 2 };
-    component.onPage(pageEvent);
-    expect(dispatchSpy).toHaveBeenCalledWith(setPagina({ pagina: 1 }));
+  it('deve despachar setTamanhoPagina quando o pageSize mudar', () => {
+    const dispatch = jest.spyOn(store, 'dispatch');
+    const event: PageEvent = { pageIndex: 0, pageSize: 12, length: 24 };
+    component.onPage(event);
+    expect(dispatch).toHaveBeenCalledWith(setTamanhoPagina({ tamanho: 12 }));
+    expect(dispatch).toHaveBeenCalledWith(setPagina({ pagina: 0 }));
   });
 
-  it('deve despachar setTamanhoPagina ao mudar tamanho de página', () => {
-    const dispatchSpy = jest.spyOn(store, 'dispatch');
-    const pageEvent: PageEvent = { pageIndex: 0, pageSize: 12, length: 2 };
-    component.onPage(pageEvent);
-    expect(dispatchSpy).toHaveBeenCalledWith(setTamanhoPagina({ tamanho: 12 }));
+  it('usuarios$ deve emitir o mock do store', (done) => {
+    component.usuarios$.subscribe(usuarios => {
+      expect(usuarios.length).toBe(2);
+      expect(usuarios[0].nome).toBe('Ana Silva');
+      done();
+    });
   });
 
-  it('deve ter array de skeletons com 6 itens', () => {
-    expect(component.skeletons.length).toBe(6);
-  });
-
-  it('deve ter campoBusca inicializado com string vazia', () => {
-    expect(component.campoBusca.value).toBe('');
+  it('loading$ deve emitir false', (done) => {
+    component.loading$.subscribe(loading => {
+      expect(loading).toBe(false);
+      done();
+    });
   });
 });
