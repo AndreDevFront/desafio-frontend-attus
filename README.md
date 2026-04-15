@@ -13,7 +13,8 @@ Aplicação Angular desenvolvida como parte do processo seletivo para a vaga de 
 | NgRx | 17+ | Gerenciamento de estado global |
 | RxJS | 7+ | Programação reativa |
 | TypeScript | 5+ | Tipagem estática |
-| Vitest | latest | Testes unitários |
+| Jest | 29+ | Testes unitários |
+| jest-preset-angular | 14+ | Integração Jest + Angular/Zone.js |
 
 ---
 
@@ -52,9 +53,14 @@ npm start
 # Executar todos os testes unitários
 npm test
 
-# Executar com cobertura
+# Executar em modo watch
+npm run test:watch
+
+# Executar com cobertura de código
 npm run test:coverage
 ```
+
+> Cobertura atual: **~80% statements · ~71% branches · ~70% functions · ~83% lines** — acima do threshold de 60% em todas as métricas.
 
 ---
 
