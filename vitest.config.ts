@@ -1,9 +1,7 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vitest/config';
-import angular from '@analogjs/vitest-angular/plugin';
 
 export default defineConfig({
-  plugins: [angular()],
   test: {
     globals: true,
     environment: 'jsdom',
@@ -17,6 +15,15 @@ export default defineConfig({
     },
     sequence: {
       hooks: 'list',
+    },
+    server: {
+      deps: {
+        inline: [
+          /zone\.js/,
+          /@angular/,
+          /@ngrx/,
+        ],
+      },
     },
     coverage: {
       provider: 'v8',
