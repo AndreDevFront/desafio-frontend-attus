@@ -14,9 +14,10 @@ describe('AppComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('deve ter selector app-root', () => {
+  it('deve renderizar o router-outlet', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    // debugElement.nativeElement é o próprio host element <app-root>
-    expect(fixture.debugElement.nativeElement.tagName.toLowerCase()).toBe('app-root');
+    fixture.detectChanges();
+    const outlet = fixture.nativeElement.querySelector('router-outlet');
+    expect(outlet).not.toBeNull();
   });
 });
