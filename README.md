@@ -4,6 +4,12 @@ Aplicação Angular desenvolvida como parte do processo seletivo para a vaga de 
 
 ---
 
+## 🌐 Demo ao vivo
+
+**[https://andredevfront.github.io/desafio-frontend-attus/](https://andredevfront.github.io/desafio-frontend-attus/)**
+
+---
+
 ## 🚀 Tecnologias utilizadas
 
 | Tecnologia | Versão | Finalidade |
@@ -84,7 +90,9 @@ src/
     │       │       ├── usuarios.selectors.ts
     │       │       ├── usuarios.selectors.spec.ts
     │       │       ├── usuarios.effects.ts
-    │       │       └── usuarios.effects.spec.ts
+    │       │       ├── usuarios.effects.spec.ts
+    │       │       ├── snackbar.effects.ts
+    │       │       └── snackbar.effects.spec.ts
     │       ├── feature-usuarios/
     │       │   ├── usuarios-page.component.ts
     │       │   └── usuarios-page.component.spec.ts
@@ -104,7 +112,7 @@ src/
     └── shared/
         ├── components/
         │   └── confirm-dialog/
-        │       └── confirm-dialog.component.ts  # Modal de confirmação reutilizável
+        │       └── confirm-dialog.component.ts
         └── directives/
             ├── cpf-mask.directive.ts
             ├── cpf-mask.directive.spec.ts
@@ -146,7 +154,7 @@ src/
 - `Actions`: `loadUsuarios`, `salvarUsuario`, `deletarUsuario`, `setFiltroNome`, `setPagina`, `setTamanhoPagina`, `abrirModalUsuario`, `fecharModalUsuario`
 - `Reducer`: estado imutável com `deletando: Set<string>` para rastrear deletes em andamento
 - `Selectors`: `selectUsuariosFiltrados`, `selectUsuariosPaginados`, `selectTotalFiltrados`, `selectModalAberto`, `selectSalvando`
-- `Effects`: `loadUsuarios$`, `salvarUsuario$`, `deletarUsuario$` com `switchMap` + `catchError`
+- `Effects`: `loadUsuarios$`, `salvarUsuario$`, `deletarUsuario$` + `SnackbarEffects` (side effects sem dispatch)
 
 ---
 
@@ -157,8 +165,9 @@ src/
 | `usuarios.reducer.spec.ts` | Todos os casos: load, save, delete (deletando Set), filtro, paginação, modal |
 | `usuarios.selectors.spec.ts` | Selectors de filtro, paginação e totais |
 | `usuarios.effects.spec.ts` | load, save e delete — caminhos de sucesso, erro com message e erro sem message |
+| `snackbar.effects.spec.ts` | 5 casos de snackbar: salvar sucesso/erro, deletar sucesso/erro, load erro |
 | `usuarios.service.spec.ts` | CRUD completo do service mock |
-| `usuarios-page.component.spec.ts` | Snackbar de sucesso/erro para save e delete, dispatch de load e abrirModal |
+| `usuarios-page.component.spec.ts` | Dispatch de load e abrirModal |
 | `cpf-mask.directive.spec.ts` | Máscara, remoção de não-numéricos, limite de 11 dígitos, sync com FormControl |
 | `telefone-mask.directive.spec.ts` | Máscara fixo/celular, remoção de não-numéricos, limite de 11 dígitos, sync com FormControl |
 | `usuario-card.component.spec.ts` | Renderização, getters (inicial, tipoIcon, bgAvatar), fallback, dispatch de editar |
@@ -179,3 +188,4 @@ src/
 | Máscaras de validação *(diferencial)* | Diretivas puras Angular sem biblioteca externa |
 | Paginação *(diferencial)* | `MatPaginator` integrado ao NgRx store |
 | CRUD completo *(diferencial)* | Criar, editar e excluir com confirmação e feedback visual |
+| Deploy *(diferencial)* | GitHub Pages — [demo ao vivo](https://andredevfront.github.io/desafio-frontend-attus/) |
