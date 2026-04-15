@@ -4,7 +4,9 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'jsdom',
+    // happy-dom mantem o contexto de modulos vivo entre testes
+    // ao contrario do jsdom que recria o ambiente e quebra a ProxyZone
+    environment: 'happy-dom',
     setupFiles: ['src/test-setup.ts'],
     include: ['src/**/*.spec.ts'],
     pool: 'forks',
