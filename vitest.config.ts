@@ -7,6 +7,14 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['src/test-setup.ts'],
     include: ['src/**/*.spec.ts'],
+    // Roda todos os testes em um único processo/worker para que
+    // o Zone.js e o TestBed compartilhem o mesmo contexto de módulo
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
     sequence: {
       hooks: 'list',
     },

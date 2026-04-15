@@ -7,14 +7,8 @@ import {
   platformBrowserDynamicTesting,
 } from '@angular/platform-browser-dynamic/testing';
 
-beforeEach(() => {
-  getTestBed().initTestEnvironment(
-    BrowserDynamicTestingModule,
-    platformBrowserDynamicTesting(),
-    { teardown: { destroyAfterEach: true } },
-  );
-});
-
-afterEach(() => {
-  getTestBed().resetTestEnvironment();
-});
+getTestBed().initTestEnvironment(
+  BrowserDynamicTestingModule,
+  platformBrowserDynamicTesting(),
+  { teardown: { destroyAfterEach: true } },
+);
