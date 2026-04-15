@@ -2,13 +2,9 @@ import type { Config } from 'jest';
 
 const config: Config = {
   preset: 'jest-preset-angular',
-  setupFilesAfterFramework: ['<rootDir>/src/test-setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   testEnvironment: 'jsdom',
-  testMatch: ['<rootDir>/src/**/*.spec.ts'],
-  moduleNameMapper: {
-    '^@app/(.*)$': '<rootDir>/src/app/$1',
-    '^@env/(.*)$': '<rootDir>/src/environments/$1',
-  },
+  testMatch: ['**/*.spec.ts'],
   collectCoverageFrom: [
     'src/app/**/*.ts',
     '!src/app/**/*.spec.ts',
@@ -34,6 +30,7 @@ const config: Config = {
     ],
   },
   transformIgnorePatterns: ['node_modules/(?!(@angular|@ngrx|rxjs|zone\\.js)/)'],
+  moduleFileExtensions: ['ts', 'html', 'js', 'json', 'mjs'],
 };
 
 export default config;
