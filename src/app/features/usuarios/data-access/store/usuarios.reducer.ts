@@ -59,13 +59,9 @@ export const usuariosReducer = createReducer(
   on(deletarUsuarioSuccess, (state, { id }) => {
     const deletando = new Set(state.deletando);
     deletando.delete(id);
-    return {
-      ...state,
-      deletando,
-      usuarios: state.usuarios.filter((u) => u.id !== id),
-    };
+    return { ...state, deletando, usuarios: state.usuarios.filter((u) => u.id !== id) };
   }),
-  on(deletarUsuarioError, (state, { id, erro }: { id: string; erro: string }) => {
+  on(deletarUsuarioError, (state, { id, erro }) => {
     const deletando = new Set(state.deletando);
     deletando.delete(id);
     return { ...state, deletando, erro };

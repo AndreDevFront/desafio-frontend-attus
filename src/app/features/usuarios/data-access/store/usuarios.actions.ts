@@ -14,7 +14,7 @@ export const salvarUsuarioError   = createAction('[Usuarios] Salvar Usuario Erro
 // Deletar
 export const deletarUsuario        = createAction('[Usuarios] Deletar Usuario',         props<{ id: string }>());
 export const deletarUsuarioSuccess = createAction('[Usuarios] Deletar Usuario Success', props<{ id: string }>());
-export const deletarUsuarioError   = createAction('[Usuarios] Deletar Usuario Error',   props<{ erro: string }>());
+export const deletarUsuarioError   = createAction('[Usuarios] Deletar Usuario Error',   props<{ id: string; erro: string }>());
 
 // UI
 export const setFiltroNome      = createAction('[Usuarios] Set Filtro Nome',  props<{ filtro: string }>());
