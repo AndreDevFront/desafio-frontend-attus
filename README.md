@@ -72,19 +72,41 @@ src/
     ├── features/
     │   └── usuarios/
     │       ├── data-access/
-    │       │   ├── models/          # Interfaces e tipos
-    │       │   ├── services/        # UsuariosService (mock com delay)
-    │       │   └── store/           # NgRx: actions, reducer, selectors, effects
-    │       ├── feature-usuarios/    # Componente raiz da feature
+    │       │   ├── models/
+    │       │   │   └── usuario.model.ts         # Interface Usuario e tipo TipoTelefone
+    │       │   ├── services/
+    │       │   │   ├── usuarios.service.ts      # CRUD mock com delay assíncrono
+    │       │   │   └── usuarios.service.spec.ts
+    │       │   └── store/
+    │       │       ├── usuarios.actions.ts
+    │       │       ├── usuarios.reducer.ts
+    │       │       ├── usuarios.reducer.spec.ts
+    │       │       ├── usuarios.selectors.ts
+    │       │       ├── usuarios.selectors.spec.ts
+    │       │       ├── usuarios.effects.ts
+    │       │       └── usuarios.effects.spec.ts
+    │       ├── feature-usuarios/
+    │       │   ├── usuarios-page.component.ts   # Componente raiz da feature
+    │       │   └── usuarios-page.component.spec.ts
     │       └── ui/
-    │           ├── usuario-card/    # Card de exibição do usuário
-    │           ├── usuario-form/    # Formulário reativo com máscaras
-    │           ├── usuario-modal/   # Modal de criação/edição
-    │           └── usuarios-list/   # Listagem com busca e paginação
+    │           ├── usuario-card/
+    │           │   ├── usuario-card.component.ts
+    │           │   └── usuario-card.component.spec.ts
+    │           ├── usuario-form/
+    │           │   ├── usuario-form.component.ts # Formulário reativo com máscaras
+    │           │   └── usuario-form.component.spec.ts
+    │           ├── usuario-modal/
+    │           │   ├── usuario-modal.component.ts # Modal de criação/edição
+    │           │   └── usuario-modal.component.spec.ts
+    │           └── usuarios-list/
+    │               ├── usuarios-list.component.ts # Listagem com busca e paginação
+    │               └── usuarios-list.component.spec.ts
     └── shared/
         └── directives/
-            ├── cpf-mask.directive.ts      # Máscara 000.000.000-00
-            └── telefone-mask.directive.ts # Máscara (00) 00000-0000
+            ├── cpf-mask.directive.ts            # Máscara 000.000.000-00
+            ├── cpf-mask.directive.spec.ts
+            ├── telefone-mask.directive.ts       # Máscara (00) 00000-0000
+            └── telefone-mask.directive.spec.ts
 ```
 
 ---
@@ -108,10 +130,28 @@ src/
 - Preenchimento automático ao editar
 
 ### Gerenciamento de estado (NgRx)
-- `Actions`: `loadUsuarios`, `salvarUsuario`, `setFiltroNome`, `setPagina`, `setTamanhoPagina`
+- `Actions`: `loadUsuarios`, `salvarUsuario`, `setFiltroNome`, `setPagina`, `setTamanhoPagina`, `abrirModalUsuario`, `fecharModalUsuario`
 - `Reducer`: estado imutável com tipagem forte
-- `Selectors`: `selectUsuariosFiltrados`, `selectUsuariosPaginados`, `selectTotalFiltrados`, `selectTotalPaginas`
+- `Selectors`: `selectUsuariosFiltrados`, `selectUsuariosPaginados`, `selectTotalFiltrados`, `selectModalAberto`, `selectSalvando`
 - `Effects`: fluxo assíncrono com `switchMap` + `catchError`
+
+---
+
+## 🧩 Cobertura de testes
+
+| Arquivo | O que é testado |
+|---|---|
+| `usuarios.reducer.spec.ts` | Todos os casos do reducer (estado inicial, load, save, filtro, paginação, modal) |
+| `usuarios.selectors.spec.ts` | Selectors de filtro, paginação e totais |
+| `usuarios.effects.spec.ts` | Efeitos assíncronos de load e save com mock do service |
+| `usuarios.service.spec.ts` | CRUD completo do service mock |
+| `usuarios-page.component.spec.ts` | Renderização e integração com o store |
+| `cpf-mask.directive.spec.ts` | Máscara, remoção de não-numéricos, limite de 11 dígitos, sync com FormControl |
+| `telefone-mask.directive.spec.ts` | Máscara fixo/celular, remoção de não-numéricos, limite de 11 dígitos, sync com FormControl |
+| `usuario-card.component.spec.ts` | Renderização, getters (inicial, tipoIcon, bgAvatar), dispatch de editar |
+| `usuario-form.component.spec.ts` | Validações, ngOnChanges (editar/reset), submeter com/sem id, cancelar |
+| `usuario-modal.component.spec.ts` | fechar, fecharBackdrop, salvar (criar e editar), seletores do store |
+| `usuarios-list.component.spec.ts` | Busca com debounce, mudança de página, mudança de pageSize, seletores |
 
 ---
 
@@ -119,9 +159,9 @@ src/
 
 | Requisito | Implementação |
 |---|---|
-| 2+ operadores RxJS além de `map`/`tap` | `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchError` |
+| 2+ operadores RxJS além de `map`/`tap` | `switchMap`, `debounceTime`, `distinctUntilChanged`, `catchError`, `takeUntilDestroyed` |
 | Componentes standalone | Todos os componentes usam `standalone: true` |
 | Sem memory leaks | `takeUntilDestroyed`, `async pipe`, `OnPush` |
-| Cobertura de testes > 60% | Reducer, selectors, service e diretivas testados |
+| Cobertura de testes > 60% | Reducer, selectors, effects, service, diretivas e todos os componentes UI testados |
 | Máscaras de validação *(diferencial)* | Diretivas puras Angular sem biblioteca externa |
 | Paginação *(diferencial)* | `MatPaginator` integrado ao NgRx store |
