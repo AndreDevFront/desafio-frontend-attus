@@ -61,14 +61,23 @@ describe('UsuariosListComponent', () => {
     const event: PageEvent = { pageIndex: 1, pageSize: 6, length: 12 };
     component.onPage(event);
     expect(dispatch).toHaveBeenCalledWith(setPagina({ pagina: 1 }));
+    expect(dispatch).not.toHaveBeenCalledWith(setTamanhoPagina({ tamanho: 6 }));
   });
 
-  it('deve despachar setTamanhoPagina quando o pageSize mudar', () => {
+  it('deve despachar setTamanhoPagina E setPagina quando o pageSize mudar', () => {
     const dispatch = jest.spyOn(store, 'dispatch');
     const event: PageEvent = { pageIndex: 0, pageSize: 12, length: 24 };
     component.onPage(event);
     expect(dispatch).toHaveBeenCalledWith(setTamanhoPagina({ tamanho: 12 }));
     expect(dispatch).toHaveBeenCalledWith(setPagina({ pagina: 0 }));
+  });
+
+  it('não deve despachar setTamanhoPagina quando pageSize não mudar', () => {
+    const dispatch = jest.spyOn(store, 'dispatch');
+    const event: PageEvent = { pageIndex: 2, pageSize: 6, length: 24 };
+    component.onPage(event);
+    expect(dispatch).not.toHaveBeenCalledWith(setTamanhoPagina({ tamanho: 6 }));
+    expect(dispatch).toHaveBeenCalledWith(setPagina({ pagina: 2 }));
   });
 
   it('usuarios$ deve emitir o mock do store', (done) => {
@@ -85,4 +94,11 @@ describe('UsuariosListComponent', () => {
       done();
     });
   });
+
+  it('campoBusca deve despachar string vazia quando valor for null', fakeAsync(() => {
+    const dispatch = jest.spyOn(store, 'dispatch');
+    component.campoBusca.setValue(null);
+    tick(300);
+    expect(dispatch).toHaveBeenCalledWith(setFiltroNome({ filtro: '' }));
+  }));
 });

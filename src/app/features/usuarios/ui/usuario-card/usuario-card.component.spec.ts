@@ -55,6 +55,10 @@ describe('UsuarioCardComponent', () => {
     expect(component.inicial).toBe('A');
   });
 
+  it('getter bgAvatar deve retornar uma cor hex', () => {
+    expect(component.bgAvatar).toMatch(/^#[0-9a-f]{6}$/i);
+  });
+
   it('getter tipoIcon deve retornar smartphone para celular', () => {
     expect(component.tipoIcon).toBe('smartphone');
   });
@@ -67,6 +71,16 @@ describe('UsuarioCardComponent', () => {
   it('getter tipoIcon deve retornar business para comercial', () => {
     component.usuario = { ...usuarioMock, tipoTelefone: 'comercial' };
     expect(component.tipoIcon).toBe('business');
+  });
+
+  it('getter tipoIcon deve retornar phone como fallback para tipo desconhecido', () => {
+    component.usuario = { ...usuarioMock, tipoTelefone: 'desconhecido' as any };
+    expect(component.tipoIcon).toBe('phone');
+  });
+
+  it('getter bgTipo deve retornar #666 como fallback para tipo desconhecido', () => {
+    component.usuario = { ...usuarioMock, tipoTelefone: 'desconhecido' as any };
+    expect(component.bgTipo).toBe('#666');
   });
 
   it('deve disparar a action abrirModalUsuario ao chamar editar()', () => {

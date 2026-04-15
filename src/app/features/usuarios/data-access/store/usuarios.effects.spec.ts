@@ -59,12 +59,22 @@ describe('UsuariosEffects', () => {
       });
     });
 
-    it('deve emitir loadUsuariosError quando service.listar() falha', (done) => {
+    it('deve emitir loadUsuariosError quando service.listar() falha com mensagem', (done) => {
       service.listar.mockReturnValue(throwError(() => new Error('Falha na rede')));
       actions$ = of(loadUsuarios());
 
       effects.loadUsuarios$.subscribe((action) => {
         expect(action).toEqual(loadUsuariosError({ erro: 'Falha na rede' }));
+        done();
+      });
+    });
+
+    it('deve usar mensagem padrão quando erro não tem .message', (done) => {
+      service.listar.mockReturnValue(throwError(() => ({})));
+      actions$ = of(loadUsuarios());
+
+      effects.loadUsuarios$.subscribe((action) => {
+        expect(action).toEqual(loadUsuariosError({ erro: 'Erro ao carregar usuários' }));
         done();
       });
     });
@@ -98,12 +108,34 @@ describe('UsuariosEffects', () => {
       });
     });
 
-    it('deve emitir salvarUsuarioError quando a operação falha', (done) => {
+    it('deve emitir salvarUsuarioError quando a operação falha com mensagem', (done) => {
       service.atualizar.mockReturnValue(throwError(() => new Error('Erro ao salvar')));
       actions$ = of(salvarUsuario({ usuario: mockUsuario }));
 
       effects.salvarUsuario$.subscribe((action) => {
         expect(action).toEqual(salvarUsuarioError({ erro: 'Erro ao salvar' }));
+        done();
+      });
+    });
+
+    it('deve usar mensagem padrão quando erro de salvar não tem .message', (done) => {
+      service.atualizar.mockReturnValue(throwError(() => ({})));
+      actions$ = of(salvarUsuario({ usuario: mockUsuario }));
+
+      effects.salvarUsuario$.subscribe((action) => {
+        expect(action).toEqual(salvarUsuarioError({ erro: 'Erro ao salvar usuário' }));
+        done();
+      });
+    });
+
+    it('deve chamar service.salvar (não atualizar) quando payload não tem id', (done) => {
+      const semId = { nome: 'X', email: 'x@x.com', cpf: '00000000000', telefone: '00000000000', tipoTelefone: 'celular' as const };
+      service.salvar.mockReturnValue(of({ ...semId, id: 'novo' }));
+      actions$ = of(salvarUsuario({ usuario: semId }));
+
+      effects.salvarUsuario$.subscribe(() => {
+        expect(service.salvar).toHaveBeenCalledWith(semId);
+        expect(service.atualizar).not.toHaveBeenCalled();
         done();
       });
     });
