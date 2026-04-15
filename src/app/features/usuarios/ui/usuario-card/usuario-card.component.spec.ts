@@ -6,7 +6,7 @@ import { abrirModalUsuario } from '../../data-access/store/usuarios.actions';
 import { Usuario } from '../../data-access/models/usuario.model';
 
 const usuarioMock: Usuario = {
-  id: 1,
+  id: '1',
   nome: 'Ana Silva',
   email: 'ana@email.com',
   cpf: '12345678901',
@@ -54,7 +54,7 @@ describe('UsuarioCardComponent', () => {
   });
 
   it('deve despachar abrirModalUsuario ao clicar em editar', () => {
-    const dispatchSpy = vi.spyOn(store, 'dispatch');
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
     component.editar();
     expect(dispatchSpy).toHaveBeenCalledWith(
       abrirModalUsuario({ usuario: usuarioMock })

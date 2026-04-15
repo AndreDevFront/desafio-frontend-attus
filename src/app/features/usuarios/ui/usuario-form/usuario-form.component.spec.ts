@@ -4,7 +4,7 @@ import { UsuarioFormComponent } from './usuario-form.component';
 import { Usuario } from '../../data-access/models/usuario.model';
 
 const usuarioMock: Usuario = {
-  id: 1,
+  id: '1',
   nome: 'Ana Silva',
   email: 'ana@email.com',
   cpf: '123.456.789-01',
@@ -72,13 +72,13 @@ describe('UsuarioFormComponent', () => {
   });
 
   it('não deve emitir submeterForm se formulário inválido', () => {
-    const emitSpy = vi.spyOn(component.submeterForm, 'emit');
+    const emitSpy = jest.spyOn(component.submeterForm, 'emit');
     component.submeter();
     expect(emitSpy).not.toHaveBeenCalled();
   });
 
   it('deve emitir submeterForm com payload correto quando válido', () => {
-    const emitSpy = vi.spyOn(component.submeterForm, 'emit');
+    const emitSpy = jest.spyOn(component.submeterForm, 'emit');
     component.form.setValue({
       nome: 'Ana Silva',
       email: 'ana@email.com',
@@ -93,7 +93,7 @@ describe('UsuarioFormComponent', () => {
   });
 
   it('deve remover máscara do CPF no payload emitido', () => {
-    const emitSpy = vi.spyOn(component.submeterForm, 'emit');
+    const emitSpy = jest.spyOn(component.submeterForm, 'emit');
     component.form.setValue({
       nome: 'Ana Silva',
       email: 'ana@email.com',
@@ -107,7 +107,7 @@ describe('UsuarioFormComponent', () => {
   });
 
   it('deve emitir evento cancelar ao chamar cancelar.emit()', () => {
-    const emitSpy = vi.spyOn(component.cancelar, 'emit');
+    const emitSpy = jest.spyOn(component.cancelar, 'emit');
     component.cancelar.emit();
     expect(emitSpy).toHaveBeenCalled();
   });

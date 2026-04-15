@@ -12,6 +12,10 @@ const MOCK_USUARIOS: Usuario[] = [
   { id: '6', nome: 'Felipe Costa', email: 'felipe.costa@email.com', cpf: '678.901.234-55', telefone: '(54) 96666-0006', tipoTelefone: 'celular'     },
 ];
 
+function generateId(): string {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
 @Injectable({ providedIn: 'root' })
 export class UsuariosService {
   private usuarios: Usuario[] = [...MOCK_USUARIOS];
@@ -21,7 +25,7 @@ export class UsuariosService {
   }
 
   salvar(usuario: Omit<Usuario, 'id'>): Observable<Usuario> {
-    const novo: Usuario = { ...usuario, id: crypto.randomUUID() };
+    const novo: Usuario = { ...usuario, id: generateId() };
     this.usuarios = [...this.usuarios, novo];
     return of(novo).pipe(delay(500));
   }

@@ -46,7 +46,7 @@ describe('UsuariosListComponent', () => {
   });
 
   afterEach(() => {
-    vi.useRealTimers();
+    jest.useRealTimers();
   });
 
   it('deve criar o componente', () => {
@@ -54,25 +54,25 @@ describe('UsuariosListComponent', () => {
   });
 
   it('deve despachar setFiltroNome após debounce ao digitar no campo de busca', async () => {
-    vi.useFakeTimers();
-    const dispatchSpy = vi.spyOn(store, 'dispatch');
+    jest.useFakeTimers();
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
 
     component.campoBusca.setValue('Ana');
-    vi.advanceTimersByTime(300);
+    jest.advanceTimersByTime(300);
     await Promise.resolve();
 
     expect(dispatchSpy).toHaveBeenCalledWith(setFiltroNome({ filtro: 'Ana' }));
   });
 
   it('deve despachar setPagina ao mudar página no paginador', () => {
-    const dispatchSpy = vi.spyOn(store, 'dispatch');
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
     const pageEvent: PageEvent = { pageIndex: 1, pageSize: 6, length: 2 };
     component.onPage(pageEvent);
     expect(dispatchSpy).toHaveBeenCalledWith(setPagina({ pagina: 1 }));
   });
 
   it('deve despachar setTamanhoPagina ao mudar tamanho de página', () => {
-    const dispatchSpy = vi.spyOn(store, 'dispatch');
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
     const pageEvent: PageEvent = { pageIndex: 0, pageSize: 12, length: 2 };
     component.onPage(pageEvent);
     expect(dispatchSpy).toHaveBeenCalledWith(setTamanhoPagina({ tamanho: 12 }));

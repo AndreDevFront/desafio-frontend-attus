@@ -51,13 +51,13 @@ describe('UsuariosPageComponent', () => {
   });
 
   it('deve despachar loadUsuarios no ngOnInit', () => {
-    const dispatchSpy = vi.spyOn(store, 'dispatch');
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
     component.ngOnInit();
     expect(dispatchSpy).toHaveBeenCalledWith(loadUsuarios());
   });
 
   it('deve despachar abrirModalUsuario com null ao chamar abrirModalNovo()', () => {
-    const dispatchSpy = vi.spyOn(store, 'dispatch');
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
     component.abrirModalNovo();
     expect(dispatchSpy).toHaveBeenCalledWith(
       abrirModalUsuario({ usuario: null })
@@ -68,7 +68,6 @@ describe('UsuariosPageComponent', () => {
     store.overrideSelector(selectErro, 'Erro de rede');
     store.refreshState();
     fixture.detectChanges();
-    // Apenas valida que o componente não quebra ao receber erro
     expect(component).toBeTruthy();
   });
 });
