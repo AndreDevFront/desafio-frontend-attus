@@ -14,8 +14,8 @@ import { PageEvent } from '@angular/material/paginator';
 import { Usuario } from '../../data-access/models/usuario.model';
 
 const usuariosMock: Usuario[] = [
-  { id: 1, nome: 'Ana Silva',   email: 'ana@email.com',   cpf: '11111111111', telefone: '11999990001', tipoTelefone: 'celular' },
-  { id: 2, nome: 'Bruno Costa', email: 'bruno@email.com', cpf: '22222222222', telefone: '11999990002', tipoTelefone: 'residencial' },
+  { id: '1', nome: 'Ana Silva',   email: 'ana@email.com',   cpf: '11111111111', telefone: '11999990001', tipoTelefone: 'celular' },
+  { id: '2', nome: 'Bruno Costa', email: 'bruno@email.com', cpf: '22222222222', telefone: '11999990002', tipoTelefone: 'residencial' },
 ];
 
 describe('UsuariosListComponent', () => {
@@ -59,7 +59,7 @@ describe('UsuariosListComponent', () => {
 
     component.campoBusca.setValue('Ana');
     vi.advanceTimersByTime(300);
-    await Promise.resolve(); // flush microtasks
+    await Promise.resolve();
 
     expect(dispatchSpy).toHaveBeenCalledWith(setFiltroNome({ filtro: 'Ana' }));
   });

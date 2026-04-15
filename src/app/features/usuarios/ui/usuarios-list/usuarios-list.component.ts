@@ -188,16 +188,21 @@ import { UsuarioCardComponent } from '../usuario-card/usuario-card.component';
 })
 export class UsuariosListComponent {
   private readonly store = inject(Store);
+  private currentPageSize = 6;
 
-  readonly campoBusca    = new FormControl('');
-  readonly usuarios$     = this.store.select(selectUsuariosPaginados);
-  readonly total$        = this.store.select(selectTotalFiltrados);
-  readonly loading$      = this.store.select(selectLoading);
-  readonly pagina$       = this.store.select(selectPaginaAtual);
+  readonly campoBusca     = new FormControl('');
+  readonly usuarios$      = this.store.select(selectUsuariosPaginados);
+  readonly total$         = this.store.select(selectTotalFiltrados);
+  readonly loading$       = this.store.select(selectLoading);
+  readonly pagina$        = this.store.select(selectPaginaAtual);
   readonly tamanhoPagina$ = this.store.select(selectTamanhoPagina);
-  readonly skeletons     = [1, 2, 3, 4, 5, 6];
+  readonly skeletons      = [1, 2, 3, 4, 5, 6];
 
   constructor() {
+    this.store.select(selectTamanhoPagina)
+      .pipe(takeUntilDestroyed())
+      .subscribe(size => this.currentPageSize = size);
+
     this.campoBusca.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -208,7 +213,7 @@ export class UsuariosListComponent {
   }
 
   onPage(event: PageEvent): void {
-    if (event.pageSize !== (this.store as any)) {
+    if (event.pageSize !== this.currentPageSize) {
       this.store.dispatch(setTamanhoPagina({ tamanho: event.pageSize }));
     }
     this.store.dispatch(setPagina({ pagina: event.pageIndex }));
