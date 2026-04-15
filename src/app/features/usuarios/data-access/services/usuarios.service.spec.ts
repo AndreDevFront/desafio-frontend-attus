@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { UsuariosService } from './usuarios.service';
-import { firstValueFrom } from 'rxjs';
-import { fakeAsync, tick } from '@angular/core/testing';
+import { Usuario } from '../models/usuario.model';
 
 describe('UsuariosService', () => {
   let service: UsuariosService;
@@ -15,45 +14,106 @@ describe('UsuariosService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('listar: retorna 6 usuários mock', fakeAsync(() => {
-    let usuarios: any[] = [];
-    service.listar().subscribe((u) => (usuarios = u));
-    tick(800);
-    expect(usuarios.length).toBe(6);
-  }));
+  describe('listar()', () => {
+    it('deve retornar a lista inicial de usuários', (done) => {
+      service.listar().subscribe((usuarios) => {
+        expect(usuarios.length).toBeGreaterThan(0);
+        expect(usuarios[0].nome).toBeDefined();
+        done();
+      });
+    });
+  });
 
-  it('salvar: adiciona novo usuário com id gerado', fakeAsync(() => {
-    let salvo: any;
-    service.salvar({
-      nome: 'Teste', email: 't@t.com',
-      cpf: '00000000000', telefone: '54999990000', tipoTelefone: 'celular',
-    }).subscribe((u) => (salvo = u));
-    tick(500);
-    expect(salvo.id).toBeTruthy();
-    expect(salvo.nome).toBe('Teste');
-  }));
+  describe('salvar()', () => {
+    it('deve adicionar um novo usuário com id gerado', (done) => {
+      const novo: Omit<Usuario, 'id'> = {
+        nome: 'Teste User',
+        email: 'teste@email.com',
+        cpf: '12345678900',
+        telefone: '54999990000',
+        tipoTelefone: 'celular',
+      };
 
-  it('atualizar: modifica usuário existente', fakeAsync(() => {
-    let atualizado: any;
-    const usuario = {
-      id: '999', nome: 'Original', email: 'o@o.com',
-      cpf: '11111111111', telefone: '54999990011', tipoTelefone: 'celular' as const,
-    };
-    service.atualizar({ ...usuario, nome: 'Modificado' }).subscribe((u) => (atualizado = u));
-    tick(500);
-    expect(atualizado.nome).toBe('Modificado');
-  }));
+      service.salvar(novo).subscribe((salvo) => {
+        expect(salvo.id).toBeDefined();
+        expect(salvo.nome).toBe('Teste User');
+        done();
+      });
+    });
 
-  it('excluir: remove usuário e retorna id', fakeAsync(() => {
-    let removedId: string | undefined;
-    // Primeiro salva
-    let novoId = '';
-    service.salvar({ nome: 'X', email: 'x@x.com', cpf: '22222222222', telefone: '54999990022', tipoTelefone: 'celular' })
-      .subscribe((u) => (novoId = u.id));
-    tick(500);
-    // Depois exclui
-    service.excluir(novoId).subscribe((id) => (removedId = id));
-    tick(300);
-    expect(removedId).toBe(novoId);
-  }));
+    it('deve incluir o novo usuário na listagem', (done) => {
+      const novo: Omit<Usuario, 'id'> = {
+        nome: 'Novo Na Lista',
+        email: 'novo@email.com',
+        cpf: '98765432100',
+        telefone: '54988880000',
+        tipoTelefone: 'comercial',
+      };
+
+      service.salvar(novo).subscribe(() => {
+        service.listar().subscribe((usuarios) => {
+          const encontrado = usuarios.find((u) => u.nome === 'Novo Na Lista');
+          expect(encontrado).toBeDefined();
+          done();
+        });
+      });
+    });
+  });
+
+  describe('atualizar()', () => {
+    it('deve atualizar os dados de um usuário existente', (done) => {
+      service.listar().subscribe((usuarios) => {
+        const original = usuarios[0];
+        const atualizado: Usuario = { ...original, nome: 'Nome Atualizado' };
+
+        service.atualizar(atualizado).subscribe((resultado) => {
+          expect(resultado.nome).toBe('Nome Atualizado');
+          expect(resultado.id).toBe(original.id);
+          done();
+        });
+      });
+    });
+
+    it('deve refletir a atualização na listagem', (done) => {
+      service.listar().subscribe((usuarios) => {
+        const original = usuarios[0];
+        const atualizado: Usuario = { ...original, email: 'novo@atualizado.com' };
+
+        service.atualizar(atualizado).subscribe(() => {
+          service.listar().subscribe((lista) => {
+            const encontrado = lista.find((u) => u.id === original.id);
+            expect(encontrado?.email).toBe('novo@atualizado.com');
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  describe('excluir()', () => {
+    it('deve retornar o id do usuário excluído', (done) => {
+      service.listar().subscribe((usuarios) => {
+        const alvo = usuarios[0];
+
+        service.excluir(alvo.id).subscribe((id) => {
+          expect(id).toBe(alvo.id);
+          done();
+        });
+      });
+    });
+
+    it('deve remover o usuário da listagem', (done) => {
+      service.listar().subscribe((usuarios) => {
+        const alvo = usuarios[0];
+
+        service.excluir(alvo.id).subscribe(() => {
+          service.listar().subscribe((lista) => {
+            const ainda = lista.find((u) => u.id === alvo.id);
+            expect(ainda).toBeUndefined();
+            done();
+          });
+        });
+      });
+    });
+  });
 });
