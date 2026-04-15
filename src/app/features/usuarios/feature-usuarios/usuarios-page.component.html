@@ -1,0 +1,47 @@
+<div class="layout">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="header-logo">
+          <mat-icon>manage_accounts</mat-icon>
+        </div>
+        <div>
+          <span class="header-title">Gestão de Usuários</span>
+          <span class="header-sub">Attus Procuradoria</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button
+          mat-flat-button
+          class="btn-novo-header"
+          (click)="abrirModalNovo()"
+          aria-label="Novo usuário"
+        >
+          <mat-icon>person_add</mat-icon>
+          Novo Usuário
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO -->
+  <main class="page-main">
+    <app-usuarios-list />
+  </main>
+
+  <!-- FAB (mobile) -->
+  <button
+    mat-fab
+    class="fab-novo"
+    (click)="abrirModalNovo()"
+    aria-label="Novo usuário"
+    matTooltip="Novo usuário"
+    matTooltipPosition="left"
+  >
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
+
+<app-usuario-modal />
