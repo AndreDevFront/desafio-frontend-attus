@@ -8,6 +8,7 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { routes } from './app.routes';
 import { usuariosReducer } from './features/usuarios/data-access/store/usuarios.reducer';
 import { UsuariosEffects } from './features/usuarios/data-access/store/usuarios.effects';
+import { SnackbarEffects } from './features/usuarios/data-access/store/snackbar.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,7 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideHttpClient(),
     provideStore({ usuarios: usuariosReducer }),
-    provideEffects([UsuariosEffects]),
+    provideEffects([UsuariosEffects, SnackbarEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
   ],
 };
