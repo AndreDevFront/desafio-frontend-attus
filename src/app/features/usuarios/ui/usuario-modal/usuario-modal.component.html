@@ -1,0 +1,42 @@
+@if (modalAberto$ | async) {
+  <div class="overlay" (click)="fecharBackdrop($event)" role="dialog" aria-modal="true">
+    <div class="modal" (click)="$event.stopPropagation()">
+
+      <!-- Header do modal -->
+      <div class="modal-header">
+        <div class="modal-header-icon">
+          <mat-icon>{{ (usuarioEdicao$ | async) ? 'edit' : 'person_add' }}</mat-icon>
+        </div>
+        <div>
+          <h2 class="modal-title">
+            {{ (usuarioEdicao$ | async) ? 'Editar Usuário' : 'Novo Usuário' }}
+          </h2>
+          <p class="modal-sub">
+            {{ (usuarioEdicao$ | async) ? 'Atualize os dados do cadastro' : 'Preencha os dados para cadastrar' }}
+          </p>
+        </div>
+        <button
+          mat-icon-button
+          class="btn-fechar"
+          (click)="fechar()"
+          aria-label="Fechar modal"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <!-- Divider -->
+      <div class="modal-divider"></div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <app-usuario-form
+          [usuarioEdicao]="usuarioEdicao$ | async"
+          [salvando]="(salvando$ | async) ?? false"
+          (submeterForm)="salvar($event)"
+          (cancelar)="fechar()"
+        />
+      </div>
+    </div>
+  </div>
+}

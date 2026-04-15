@@ -1,0 +1,62 @@
+<!-- Barra de busca + contador -->
+<div class="list-toolbar">
+  <div class="search-wrapper">
+    <mat-icon class="search-icon">search</mat-icon>
+    <input
+      class="search-input"
+      [formControl]="campoBusca"
+      placeholder="Buscar usuário por nome..."
+      aria-label="Buscar usuário"
+    />
+  </div>
+
+  @if (total$ | async; as total) {
+    <span class="contador">
+      {{ total }} {{ total === 1 ? 'usuário' : 'usuários' }}
+    </span>
+  }
+</div>
+
+<!-- Skeleton loading -->
+@if (loading$ | async) {
+  <div class="skeleton-grid">
+    @for (i of skeletons; track i) {
+      <div class="skeleton-card">
+        <div class="sk sk-avatar"></div>
+        <div class="sk-info">
+          <div class="sk sk-title"></div>
+          <div class="sk sk-sub"></div>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<!-- Lista de cards -->
+@if (!(loading$ | async)) {
+  @if ((total$ | async) === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <mat-icon>group_off</mat-icon>
+      </div>
+      <h3>Nenhum usuário encontrado</h3>
+      <p>Tente ajustar o filtro ou cadastre um novo usuário.</p>
+    </div>
+  } @else {
+    <div class="usuarios-grid">
+      @for (usuario of usuarios$ | async; track usuario.id) {
+        <app-usuario-card [usuario]="usuario" />
+      }
+    </div>
+
+    <!-- Paginador -->
+    <mat-paginator
+      [length]="total$ | async"
+      [pageSize]="tamanhoPagina$ | async"
+      [pageIndex]="pagina$ | async"
+      [pageSizeOptions]="[6, 12, 24]"
+      (page)="onPage($event)"
+      aria-label="Paginação de usuários"
+    />
+  }
+}
