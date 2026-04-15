@@ -10,12 +10,14 @@ export default defineConfig({
     sequence: {
       hooks: 'list',
     },
-    deps: {
-      inline: [
-        /zone\.js/,
-        /@angular/,
-        /@ngrx/,
-      ],
+    server: {
+      deps: {
+        inline: [
+          /zone\.js/,
+          /@angular/,
+          /@ngrx/,
+        ],
+      },
     },
     coverage: {
       provider: 'v8',
