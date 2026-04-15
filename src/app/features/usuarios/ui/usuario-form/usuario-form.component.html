@@ -6,8 +6,10 @@
       <mat-label>Nome completo</mat-label>
       <mat-icon matPrefix>person_outline</mat-icon>
       <input matInput formControlName="nome" placeholder="João da Silva" />
-      @if (form.get('nome')?.hasError('required') && form.get('nome')?.touched) {
-        <mat-error>Nome é obrigatório.</mat-error>
+      @if (form.get('nome')?.touched) {
+        @if (form.get('nome')?.hasError('required')) {
+          <mat-error>Nome é obrigatório.</mat-error>
+        }
       }
     </mat-form-field>
 
@@ -15,11 +17,12 @@
       <mat-label>E-mail</mat-label>
       <mat-icon matPrefix>mail_outline</mat-icon>
       <input matInput formControlName="email" type="email" placeholder="email@exemplo.com" />
-      @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
-        <mat-error>E-mail é obrigatório.</mat-error>
-      }
-      @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
-        <mat-error>Formato de e-mail inválido.</mat-error>
+      @if (form.get('email')?.touched) {
+        @if (form.get('email')?.hasError('required')) {
+          <mat-error>E-mail é obrigatório.</mat-error>
+        } @else if (form.get('email')?.hasError('email')) {
+          <mat-error>Formato de e-mail inválido.</mat-error>
+        }
       }
     </mat-form-field>
   </div>
@@ -36,11 +39,12 @@
         appCpfMask
         maxlength="14"
       />
-      @if (form.get('cpf')?.hasError('required') && form.get('cpf')?.touched) {
-        <mat-error>CPF é obrigatório.</mat-error>
-      }
-      @if (form.get('cpf')?.hasError('cpfInvalido') && form.get('cpf')?.touched) {
-        <mat-error>CPF deve conter 11 dígitos.</mat-error>
+      @if (form.get('cpf')?.touched) {
+        @if (form.get('cpf')?.hasError('required')) {
+          <mat-error>CPF é obrigatório.</mat-error>
+        } @else if (form.get('cpf')?.hasError('cpfInvalido')) {
+          <mat-error>CPF deve conter 11 dígitos.</mat-error>
+        }
       }
     </mat-form-field>
 
@@ -54,11 +58,12 @@
         appTelefoneMask
         maxlength="15"
       />
-      @if (form.get('telefone')?.hasError('required') && form.get('telefone')?.touched) {
-        <mat-error>Telefone é obrigatório.</mat-error>
-      }
-      @if (form.get('telefone')?.hasError('telefoneInvalido') && form.get('telefone')?.touched) {
-        <mat-error>Telefone deve ter 10 ou 11 dígitos.</mat-error>
+      @if (form.get('telefone')?.touched) {
+        @if (form.get('telefone')?.hasError('required')) {
+          <mat-error>Telefone é obrigatório.</mat-error>
+        } @else if (form.get('telefone')?.hasError('telefoneInvalido')) {
+          <mat-error>Telefone deve ter 10 ou 11 dígitos.</mat-error>
+        }
       }
     </mat-form-field>
   </div>
