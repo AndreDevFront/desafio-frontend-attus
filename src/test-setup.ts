@@ -1,6 +1,6 @@
-// IMPORTANTE: zone.js/testing DEVE ser o primeiro import
-// para que o monkey-patch da ProxyZone aconteca antes
-// que o Vitest registre qualquer hook global (beforeEach/afterEach)
+// zone.js e zone.js/testing precisam ser importados ANTES de qualquer
+// módulo Angular para que o ProxyZoneSpec seja registrado no Zone global
+// que o Angular usa internamente
 import 'zone.js';
 import 'zone.js/testing';
 
@@ -10,8 +10,6 @@ import {
   platformBrowserDynamicTesting,
 } from '@angular/platform-browser-dynamic/testing';
 
-// destroyAfterEach: false evita que o Angular chame
-// resetFakeAsyncZone() no afterEach global do Vitest
 getTestBed().initTestEnvironment(
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting(),
