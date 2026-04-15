@@ -1,17 +1,26 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 4px;
 }
 
 mat-form-field {
   width: 100%;
+
+  // Garante que o espaço do mat-error seja reservado no fluxo do documento
+  &.mat-mdc-form-field {
+    margin-bottom: 4px;
+  }
 }
 
+// O Angular Material usa subscript-wrapper para o mat-error;
+// subscriptSizing='dynamic' (padrão) já empurra o conteúdo,
+// mas precisamos garantir que o grid não colapsa a linha.
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0 12px;
+  align-items: start; // mantém cada célula ancorada no topo, sem esticar
 }
 
 .form-actions {
