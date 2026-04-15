@@ -16,6 +16,7 @@ describe('AppComponent', () => {
 
   it('deve ter selector app-root', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    expect(fixture.nativeElement.tagName.toLowerCase()).toBe('app-root');
+    // debugElement.nativeElement é o próprio host element <app-root>
+    expect(fixture.debugElement.nativeElement.tagName.toLowerCase()).toBe('app-root');
   });
 });
