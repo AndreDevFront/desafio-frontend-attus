@@ -1,14 +1,14 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vitest/config';
+import angular from '@analogjs/vitest-angular/plugin';
 
 export default defineConfig({
+  plugins: [angular()],
   test: {
     globals: true,
     environment: 'jsdom',
     setupFiles: ['src/test-setup.ts'],
     include: ['src/**/*.spec.ts'],
-    // Roda todos os testes em um único processo/worker para que
-    // o Zone.js e o TestBed compartilhem o mesmo contexto de módulo
     pool: 'forks',
     poolOptions: {
       forks: {
@@ -17,15 +17,6 @@ export default defineConfig({
     },
     sequence: {
       hooks: 'list',
-    },
-    server: {
-      deps: {
-        inline: [
-          /zone\.js/,
-          /@angular/,
-          /@ngrx/,
-        ],
-      },
     },
     coverage: {
       provider: 'v8',
