@@ -7,6 +7,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['src/test-setup.ts'],
     include: ['src/**/*.spec.ts'],
+    pool: 'forks',
+    isolate: false,
     sequence: {
       hooks: 'list',
     },
