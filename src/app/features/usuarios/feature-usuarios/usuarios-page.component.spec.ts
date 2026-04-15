@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
-import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable, Subject } from 'rxjs';
+import { Actions } from '@ngrx/effects';
+import { Subject } from 'rxjs';
 import { Action } from '@ngrx/store';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UsuariosPageComponent } from './usuarios-page.component';
@@ -37,10 +37,10 @@ describe('UsuariosPageComponent', () => {
   let component: UsuariosPageComponent;
   let store: MockStore;
   let snackBar: jest.Mocked<MatSnackBar>;
-  let actions$: Subject<Action>;
+  let actionsSubject: Subject<Action>;
 
   beforeEach(async () => {
-    actions$ = new Subject<Action>();
+    actionsSubject = new Subject<Action>();
     const snackMock = { open: jest.fn() };
 
     await TestBed.configureTestingModule({
@@ -59,7 +59,8 @@ describe('UsuariosPageComponent', () => {
             { selector: selectTamanhoPagina,      value: 6     },
           ],
         }),
-        provideMockActions(() => actions$),
+        // Provê o token Actions como o mesmo Subject que usamos no teste
+        { provide: Actions, useValue: actionsSubject },
         { provide: MatSnackBar, useValue: snackMock },
       ],
     }).compileComponents();
@@ -98,7 +99,7 @@ describe('UsuariosPageComponent', () => {
   });
 
   it('deve exibir snackbar de sucesso ao receber salvarUsuarioSuccess', () => {
-    actions$.next(salvarUsuarioSuccess({ usuario: usuarioMock }));
+    actionsSubject.next(salvarUsuarioSuccess({ usuario: usuarioMock }));
     expect(snackBar.open).toHaveBeenCalledWith(
       '✅ Ana Silva salvo com sucesso!', 'Fechar',
       expect.objectContaining({ panelClass: ['snack-sucesso'] })
@@ -106,7 +107,7 @@ describe('UsuariosPageComponent', () => {
   });
 
   it('deve exibir snackbar de erro ao receber salvarUsuarioError', () => {
-    actions$.next(salvarUsuarioError({ erro: 'Falha na conexão' }));
+    actionsSubject.next(salvarUsuarioError({ erro: 'Falha na conexão' }));
     expect(snackBar.open).toHaveBeenCalledWith(
       '❌ Erro ao salvar: Falha na conexão', 'Fechar',
       expect.objectContaining({ panelClass: ['snack-erro'] })
@@ -114,7 +115,7 @@ describe('UsuariosPageComponent', () => {
   });
 
   it('deve exibir snackbar de sucesso ao receber deletarUsuarioSuccess', () => {
-    actions$.next(deletarUsuarioSuccess({ id: '1' }));
+    actionsSubject.next(deletarUsuarioSuccess({ id: '1' }));
     expect(snackBar.open).toHaveBeenCalledWith(
       '🗑️ Usuário excluído com sucesso!', 'Fechar',
       expect.objectContaining({ panelClass: ['snack-sucesso'] })
@@ -122,7 +123,7 @@ describe('UsuariosPageComponent', () => {
   });
 
   it('deve exibir snackbar de erro ao receber deletarUsuarioError', () => {
-    actions$.next(deletarUsuarioError({ id: '1', erro: 'Timeout' }));
+    actionsSubject.next(deletarUsuarioError({ id: '1', erro: 'Timeout' }));
     expect(snackBar.open).toHaveBeenCalledWith(
       '❌ Erro ao excluir: Timeout', 'Fechar',
       expect.objectContaining({ panelClass: ['snack-erro'] })
