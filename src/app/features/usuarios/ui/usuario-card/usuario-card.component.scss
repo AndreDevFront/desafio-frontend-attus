@@ -74,8 +74,13 @@
   letter-spacing: 0.02em;
 }
 
-.btn-editar {
+.acoes {
+  display: flex;
   flex-shrink: 0;
+  gap: 2px;
+}
+
+.btn-editar {
   color: var(--color-primary);
   opacity: 0.7;
   transition: opacity 180ms, background 180ms;
@@ -83,5 +88,21 @@
   &:hover {
     opacity: 1;
     background: rgba(57, 73, 171, 0.08);
+  }
+}
+
+.btn-deletar {
+  color: #e53935;
+  opacity: 0.6;
+  transition: opacity 180ms, background 180ms;
+
+  &:hover {
+    opacity: 1;
+    background: rgba(229, 57, 53, 0.08);
+  }
+
+  &:disabled {
+    color: var(--color-muted);
+    opacity: 0.4;
   }
 }

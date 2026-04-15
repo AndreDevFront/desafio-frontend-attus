@@ -21,14 +21,27 @@
     </span>
   </div>
 
-  <!-- Ação -->
-  <button
-    mat-icon-button
-    class="btn-editar"
-    (click)="editar()"
-    aria-label="Editar usuário"
-    matTooltip="Editar usuário"
-  >
-    <mat-icon>edit</mat-icon>
-  </button>
+  <!-- Ações -->
+  <div class="acoes">
+    <button
+      mat-icon-button
+      class="btn-editar"
+      (click)="editar()"
+      aria-label="Editar usuário"
+      matTooltip="Editar usuário"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      class="btn-deletar"
+      (click)="confirmarDelecao()"
+      aria-label="Excluir usuário"
+      matTooltip="Excluir usuário"
+      [disabled]="deletando()"
+    >
+      <mat-icon>{{ deletando() ? 'hourglass_empty' : 'delete_outline' }}</mat-icon>
+    </button>
+  </div>
 </article>

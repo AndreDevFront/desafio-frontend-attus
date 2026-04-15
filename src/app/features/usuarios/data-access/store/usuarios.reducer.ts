@@ -3,6 +3,7 @@ import { Usuario } from '../models/usuario.model';
 import {
   loadUsuarios, loadUsuariosSuccess, loadUsuariosError,
   salvarUsuario, salvarUsuarioSuccess, salvarUsuarioError,
+  deletarUsuario, deletarUsuarioSuccess, deletarUsuarioError,
   setFiltroNome, abrirModalUsuario, fecharModalUsuario,
   setPagina, setTamanhoPagina,
 } from './usuarios.actions';
@@ -11,6 +12,7 @@ export interface UsuariosState {
   usuarios:      Usuario[];
   loading:       boolean;
   salvando:      boolean;
+  deletando:     Set<string>;
   erro:          string | null;
   filtroNome:    string;
   modalAberto:   boolean;
@@ -23,6 +25,7 @@ export const initialState: UsuariosState = {
   usuarios:      [],
   loading:       false,
   salvando:      false,
+  deletando:     new Set<string>(),
   erro:          null,
   filtroNome:    '',
   modalAberto:   false,
@@ -47,6 +50,26 @@ export const usuariosReducer = createReducer(
     return { ...state, salvando: false, usuarios, modalAberto: false, usuarioEdicao: null };
   }),
   on(salvarUsuarioError, (state, { erro }) => ({ ...state, salvando: false, erro })),
+
+  on(deletarUsuario, (state, { id }) => {
+    const deletando = new Set(state.deletando);
+    deletando.add(id);
+    return { ...state, deletando };
+  }),
+  on(deletarUsuarioSuccess, (state, { id }) => {
+    const deletando = new Set(state.deletando);
+    deletando.delete(id);
+    return {
+      ...state,
+      deletando,
+      usuarios: state.usuarios.filter((u) => u.id !== id),
+    };
+  }),
+  on(deletarUsuarioError, (state, { id, erro }: { id: string; erro: string }) => {
+    const deletando = new Set(state.deletando);
+    deletando.delete(id);
+    return { ...state, deletando, erro };
+  }),
 
   on(setFiltroNome,      (state, { filtro })  => ({ ...state, filtroNome: filtro, pagina: 0 })),
   on(abrirModalUsuario,  (state, { usuario }) => ({ ...state, modalAberto: true,  usuarioEdicao: usuario ?? null })),

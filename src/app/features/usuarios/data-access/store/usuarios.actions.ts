@@ -11,11 +11,16 @@ export const salvarUsuario        = createAction('[Usuarios] Salvar Usuario',   
 export const salvarUsuarioSuccess = createAction('[Usuarios] Salvar Usuario Success', props<{ usuario: Usuario }>());
 export const salvarUsuarioError   = createAction('[Usuarios] Salvar Usuario Error',   props<{ erro: string }>());
 
+// Deletar
+export const deletarUsuario        = createAction('[Usuarios] Deletar Usuario',         props<{ id: string }>());
+export const deletarUsuarioSuccess = createAction('[Usuarios] Deletar Usuario Success', props<{ id: string }>());
+export const deletarUsuarioError   = createAction('[Usuarios] Deletar Usuario Error',   props<{ erro: string }>());
+
 // UI
 export const setFiltroNome      = createAction('[Usuarios] Set Filtro Nome',  props<{ filtro: string }>());
 export const abrirModalUsuario  = createAction('[Usuarios] Abrir Modal',      props<{ usuario: Usuario | null }>());
 export const fecharModalUsuario = createAction('[Usuarios] Fechar Modal');
 
 // Paginação
-export const setPagina       = createAction('[Usuarios] Set Pagina',        props<{ pagina: number }>());
+export const setPagina        = createAction('[Usuarios] Set Pagina',         props<{ pagina: number }>());
 export const setTamanhoPagina = createAction('[Usuarios] Set Tamanho Pagina', props<{ tamanho: number }>());

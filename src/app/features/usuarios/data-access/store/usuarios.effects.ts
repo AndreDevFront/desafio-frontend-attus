@@ -6,6 +6,7 @@ import { UsuariosService } from '../services/usuarios.service';
 import {
   loadUsuarios, loadUsuariosSuccess, loadUsuariosError,
   salvarUsuario, salvarUsuarioSuccess, salvarUsuarioError,
+  deletarUsuario, deletarUsuarioSuccess, deletarUsuarioError,
 } from './usuarios.actions';
 import { Usuario } from '../models/usuario.model';
 
@@ -20,7 +21,7 @@ export class UsuariosEffects {
       switchMap(() =>
         this.service.listar().pipe(
           map((usuarios) => loadUsuariosSuccess({ usuarios })),
-          catchError((err)  => of(loadUsuariosError({ erro: err.message ?? 'Erro ao carregar usuários' })))
+          catchError((err) => of(loadUsuariosError({ erro: err.message ?? 'Erro ao carregar usuários' })))
         )
       )
     )
@@ -39,6 +40,18 @@ export class UsuariosEffects {
           catchError((err) => of(salvarUsuarioError({ erro: err.message ?? 'Erro ao salvar usuário' })))
         );
       })
+    )
+  );
+
+  deletarUsuario$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deletarUsuario),
+      switchMap(({ id }) =>
+        this.service.excluir(id).pipe(
+          map(() => deletarUsuarioSuccess({ id })),
+          catchError((err) => of(deletarUsuarioError({ id, erro: err.message ?? 'Erro ao deletar usuário' })))
+        )
+      )
     )
   );
 }
